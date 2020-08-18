@@ -5,6 +5,7 @@ import dev.j3fftw.litexpansion.items.FoodSynthesizer;
 import dev.j3fftw.litexpansion.utils.Constants;
 import dev.j3fftw.litexpansion.weapons.NanoBlade;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import me.mrCookieSlime.Slimefun.api.Slimefun;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -23,7 +24,7 @@ public class Events implements Listener {
         if (e.getFoodLevel() < p.getFoodLevel()) {
             FoodSynthesizer foodSynth = (FoodSynthesizer) SlimefunItem.getByID(Items.FOOD_SYNTHESIZER.getItemId());
             for (ItemStack item : p.getInventory().getContents()) {
-                if (foodSynth.isItem(item) && foodSynth.removeItemCharge(item, 3F)) {
+                if (foodSynth.isItem(item) && foodSynth.removeItemCharge(item, 3F) && Slimefun.hasUnlocked(p, foodSynth, true)) {
                     p.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EAT, 1.5F, 1F);
                     e.setFoodLevel(20);
                     p.setSaturation(5);
@@ -41,7 +42,7 @@ public class Events implements Listener {
             final NanoBlade nanoBlade = (NanoBlade) SlimefunItem.getByID(Items.NANO_BLADE.getItemId());
             if (nanoBlade.isItem(itemInHand)
                 && itemInHand.containsEnchantment(Enchantment.getByKey(Constants.NANO_BLADE_ACTIVE_ENCHANT))
-                && nanoBlade.removeItemCharge(itemInHand, 5)
+                && nanoBlade.removeItemCharge(itemInHand, 5) && Slimefun.hasUnlocked(p, nanoBlade, true)
             ) {
                 e.setDamage(e.getDamage() * 1.75);
             }
@@ -57,7 +58,7 @@ public class Events implements Listener {
                 SlimefunItem.getByID(Items.ELECTRIC_CHESTPLATE.getItemId());
             if (chestplate != null
                 && electricChestplate.isItem(chestplate)
-                && electricChestplate.removeItemCharge(chestplate, (float) (e.getDamage() / -1.75))
+                && electricChestplate.removeItemCharge(chestplate, (float) (e.getDamage() / -1.75)) && Slimefun.hasUnlocked(p, electricChestplate, true)
             ) {
                 e.setCancelled(true);
             }

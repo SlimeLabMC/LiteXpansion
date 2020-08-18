@@ -44,7 +44,7 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
 
     private static final Map<BlockPosition, Integer> progress = new HashMap<>();
 
-    private static final CustomItem progressItem = new CustomItem(Items.UU_MATTER.getType(), "&7Progress");
+    private static final CustomItem progressItem = new CustomItem(Items.UU_MATTER.getType(), "&7進度");
 
     public MassFabricator() {
         super(Items.LITEXPANSION, Items.MASS_FABRICATOR_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -56,7 +56,7 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
     }
 
     private void setupInv() {
-        createPreset(this, "&5Mass Fabricator", blockMenuPreset -> {
+        createPreset(this, "&5物質產生器", blockMenuPreset -> {
             for (int i = 0; i < 27; i++)
                 blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
 
@@ -92,9 +92,9 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
         @Nullable final ItemStack output = inv.getItemInSlot(OUTPUT_SLOT);
         if (output != null && output.getAmount() == output.getMaxStackSize()) return;
 
-        if (!SlimefunUtils.isItemSimilar(input, Items.SCRAP, true))
+        if (!SlimefunUtils.isItemSimilar(input, Items.SCRAP, false))
             input = null;
-        if (!SlimefunUtils.isItemSimilar(input2, Items.SCRAP, true))
+        if (!SlimefunUtils.isItemSimilar(input2, Items.SCRAP, false))
             input2 = null;
 
         if (input == null && input2 == null) return;

@@ -28,7 +28,7 @@ public class RefinedSmeltery extends MultiBlockMachine {
         new NamespacedKey(LiteXpansion.getInstance(), "refined_smeltery"),
         Items.REFINED_SMELTERY,
         "",
-        "&7Used to refine ingots"
+        "&7用來精煉金屬"
     );
 
     private static final ItemStack stone_bricks = new ItemStack(Material.STONE_BRICKS);
@@ -83,7 +83,7 @@ public class RefinedSmeltery extends MultiBlockMachine {
         for (ItemStack removing : recipe) {
             if (removing != null) {
                 InvUtils.removeItem(inv, removing.getAmount(), true, stack ->
-                    SlimefunUtils.isItemSimilar(stack, removing, true));
+                    SlimefunUtils.isItemSimilar(stack, removing, false));
             }
         }
 
@@ -104,7 +104,7 @@ public class RefinedSmeltery extends MultiBlockMachine {
                         && !SlimefunUtils.isItemSimilar(converting,
                         inv.getContents()[j], true)) {
                         return false;
-                    } else if (SlimefunUtils.isItemSimilar(inv.getContents()[j], converting, true)) break;
+                    } else if (SlimefunUtils.isItemSimilar(inv.getContents()[j], converting, false)) break;
                 }
             }
         }

@@ -44,7 +44,7 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
     private static final Map<BlockPosition, Integer> progress = new HashMap<>();
 
-    private static final CustomItem progressItem = new CustomItem(Material.DEAD_BUSH, "&7Progress");
+    private static final CustomItem progressItem = new CustomItem(Material.DEAD_BUSH, "&7進度");
 
     public ScrapMachine() {
         super(Items.LITEXPANSION, Items.SCRAP_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -56,14 +56,14 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
     }
 
     private void setupInv() {
-        createPreset(this, "&8Scrap Machine", blockMenuPreset -> {
+        createPreset(this, "&8物質回收裝置", blockMenuPreset -> {
             for (int i = 0; i < 27; i++)
                 blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
 
             blockMenuPreset.addItem(INPUT_SLOT, null, (player, i, itemStack, clickAction) -> true);
             Utils.putOutputSlot(blockMenuPreset, OUTPUT_SLOT);
 
-            blockMenuPreset.addItem(PROGRESS_SLOT, new CustomItem(Material.DEAD_BUSH, "&7Progress"));
+            blockMenuPreset.addItem(PROGRESS_SLOT, new CustomItem(Material.DEAD_BUSH, "&7進度"));
         });
     }
 

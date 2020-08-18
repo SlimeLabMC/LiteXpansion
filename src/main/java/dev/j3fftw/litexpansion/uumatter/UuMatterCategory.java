@@ -26,14 +26,14 @@ public final class UuMatterCategory extends FlexCategory {
 
     private UuMatterCategory() {
         super(new NamespacedKey(LiteXpansion.getInstance(), "uumatter_category"),
-            new CustomItem(Items.UU_MATTER, "&5UU-Matter Recipes")
+            new CustomItem(Items.UU_MATTER, "&5通用物質 合成表")
         );
 
         setupInv();
     }
 
     private void setupInv() {
-        menu = new ChestMenu("&5UU-Matter Recipes");
+        menu = new ChestMenu("&5通用物質 合成表");
 
         // Header
         for (int i = 0; i < 9; ++i) {

@@ -4,7 +4,6 @@ import dev.j3fftw.litexpansion.items.CargoConfigurator;
 import dev.j3fftw.litexpansion.items.FoodSynthesizer;
 import dev.j3fftw.litexpansion.items.MagThor;
 import dev.j3fftw.litexpansion.items.Thorium;
-import dev.j3fftw.litexpansion.machine.AdvancedSolarPanel;
 import dev.j3fftw.litexpansion.machine.MassFabricator;
 import dev.j3fftw.litexpansion.machine.RefinedSmeltery;
 import dev.j3fftw.litexpansion.machine.ScrapMachine;
@@ -38,7 +37,6 @@ final class ItemSetup {
         registerMiscItems();
         registerEndgameItems();
         registerCarbonStuff();
-        registerSolarPanels();
     }
 
     private void registerTools() {
@@ -121,7 +119,7 @@ final class ItemSetup {
 
     private void registerEndgameItems() {
         registerNonPlaceableItem(Items.SCRAP, ScrapMachine.RECIPE_TYPE, new CustomItem(Material.COBBLESTONE,
-            "&7Any Item!"));
+            "&7任何物品!"));
         registerNonPlaceableItem(Items.UU_MATTER, MassFabricator.RECIPE_TYPE, Items.SCRAP);
         registerNonPlaceableItem(Items.IRIDIUM, RecipeType.ENHANCED_CRAFTING_TABLE,
             Items.UU_MATTER, Items.UU_MATTER, Items.UU_MATTER,
@@ -149,12 +147,6 @@ final class ItemSetup {
         );
 
         registerNonPlaceableItem(Items.CARBON_PLATE, RecipeType.COMPRESSOR, Items.RAW_CARBON_MESH);
-    }
-
-    private void registerSolarPanels() {
-        new AdvancedSolarPanel(AdvancedSolarPanel.Type.ADVANCED).register(LiteXpansion.getInstance());
-        new AdvancedSolarPanel(AdvancedSolarPanel.Type.HYBRID).register(LiteXpansion.getInstance());
-        new AdvancedSolarPanel(AdvancedSolarPanel.Type.ULTIMATE).register(LiteXpansion.getInstance());
     }
 
     ////////////////////////

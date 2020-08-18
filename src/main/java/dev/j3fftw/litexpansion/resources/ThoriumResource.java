@@ -41,7 +41,7 @@ public class ThoriumResource implements GEOResource {
 
     @Override
     public String getName() {
-        return "Thorium";
+        return "釷";
     }
 
     @Override
