@@ -42,7 +42,7 @@ public final class Items {
         "",
         "&a右鍵 &f啟動",
         "",
-        "&8\u21E8 &7每次攻擊消耗 &e2.5J",
+        "&8\u21E8 &7每次攻擊消耗 &e10J",
         "",
         "&c&o&8\u21E8 &e\u26A1 &70 / 500 J"
     );
@@ -270,6 +270,7 @@ public final class Items {
         Material.BLAST_FURNACE,
         "&7精煉爐"
     );
+
 
     private Items() {}
 }

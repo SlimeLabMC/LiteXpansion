@@ -42,7 +42,7 @@ public class Events implements Listener {
             final NanoBlade nanoBlade = (NanoBlade) SlimefunItem.getByID(Items.NANO_BLADE.getItemId());
             if (nanoBlade.isItem(itemInHand)
                 && itemInHand.containsEnchantment(Enchantment.getByKey(Constants.NANO_BLADE_ACTIVE_ENCHANT))
-                && nanoBlade.removeItemCharge(itemInHand, 5) && Slimefun.hasUnlocked(p, nanoBlade, true)
+                && nanoBlade.removeItemCharge(itemInHand, 10) && Slimefun.hasUnlocked(p, nanoBlade, true)
             ) {
                 e.setDamage(e.getDamage() * 1.75);
             }
