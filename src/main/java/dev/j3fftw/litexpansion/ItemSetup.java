@@ -154,19 +154,28 @@ final class ItemSetup {
                               @Nonnull ItemStack... items) {
         ItemStack[] recipe;
         if (items.length == 1) {
-            recipe = new ItemStack[] {
-                null, null, null,
-                null, items[0], null,
-                null, null, null
-            };
-            new SlimefunItem(Items.LITEXPANSION, result, type, recipe).register(LiteXpansion.getInstance());
+            if(type == RecipeType.ENHANCED_CRAFTING_TABLE){
+                recipe = new ItemStack[] {
+                        null, null, null,
+                        null, items[0], null,
+                        null, null, null
+                };
+                new SlimefunItem(Items.LITEXPANSION, result, type, recipe).register(LiteXpansion.getInstance());
 
-            // make shapeless
-            for (int i = 0; i < 9; i++) {
-                if (i == 4) continue;
-                final ItemStack[] recipe2 = new ItemStack[9];
-                recipe2[i] = items[0];
-                type.register(recipe2, result);
+                // make shapeless
+                for (int i = 0; i < 9; i++) {
+                    if (i == 4) continue;
+                    final ItemStack[] recipe2 = new ItemStack[9];
+                    recipe2[i] = items[0];
+                    type.register(recipe2, result);
+                }
+            } else {
+                recipe = new ItemStack[] {
+                        items[0], null, null,
+                        null, null, null,
+                        null, null, null
+                };
+                new SlimefunItem(Items.LITEXPANSION, result, type, recipe).register(LiteXpansion.getInstance());
             }
 
             return;
@@ -185,19 +194,28 @@ final class ItemSetup {
                                           @Nonnull ItemStack... items) {
         ItemStack[] recipe;
         if (items.length == 1) {
-            recipe = new ItemStack[] {
-                null, null, null,
-                null, items[0], null,
-                null, null, null
-            };
-            new UnplaceableBlock(Items.LITEXPANSION, result, type, recipe).register(LiteXpansion.getInstance());
+            if(type == RecipeType.ENHANCED_CRAFTING_TABLE){
+                recipe = new ItemStack[] {
+                        null, null, null,
+                        null, items[0], null,
+                        null, null, null
+                };
+                new UnplaceableBlock(Items.LITEXPANSION, result, type, recipe).register(LiteXpansion.getInstance());
 
-            // make shapeless
-            for (int i = 0; i < 9; i++) {
-                if (i == 4) continue;
-                final ItemStack[] recipe2 = new ItemStack[9];
-                recipe2[i] = items[0];
-                type.register(recipe2, result);
+                // make shapeless
+                for (int i = 0; i < 9; i++) {
+                    if (i == 4) continue;
+                    final ItemStack[] recipe2 = new ItemStack[9];
+                    recipe2[i] = items[0];
+                    type.register(recipe2, result);
+                }
+            } else {
+                recipe = new ItemStack[] {
+                        items[0], null, null,
+                        null, null, null,
+                        null, null, null
+                };
+                new UnplaceableBlock(Items.LITEXPANSION, result, type, recipe).register(LiteXpansion.getInstance());
             }
 
             return;

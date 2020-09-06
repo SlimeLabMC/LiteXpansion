@@ -1,5 +1,7 @@
 package dev.j3fftw.litexpansion;
 
+import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
+import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -58,6 +60,8 @@ public final class Items {
         Material.COMPASS,
         "&7物流配置器",
         "",
+        "&7快速調整物流節點設定",
+        "",
         "&7> &e右鍵 &7- 複製節點設定",
         "&7> &e左鍵  &7- 設置節點設定",
         "&7> &eShift+右鍵 &7- 清除節點設定"
@@ -68,14 +72,24 @@ public final class Items {
         "SCRAP_MACHINE",
             new CustomItem(SkullItem.fromHash("6872d0710cce9e11f6b4393d8215788ad8f99e5dc1378606f775fd064287d7dc"),
                     "物質回收裝置"),
-        "&8物質回收裝置"
+        "&8物質回收裝置",
+        "",
+            "&f處理各種物質轉變為 &8廢料",
+            "",
+            LoreBuilder.machine(MachineTier.END_GAME, MachineType.MACHINE),
+            LoreBuilder.powerPerSecond(450)
     );
 
     public static final SlimefunItemStack MASS_FABRICATOR_MACHINE = new SlimefunItemStack(
         "MASS_FABRICATOR_MACHINE",
             new CustomItem(SkullItem.fromHash("215cd248e3fb7b038013a1d1487168df093a7bbedce4224b5c823d3ef681a784"),
                     "物質產生器"),
-        "&5物質產生器"
+        "&5物質產生器",
+            "",
+            "&f將 &8廢料 &f強制轉換為 &5通用物質",
+            "",
+            LoreBuilder.machine(MachineTier.END_GAME, MachineType.MACHINE),
+            LoreBuilder.powerPerSecond(16666)
     );
 
     // Items
@@ -268,7 +282,9 @@ public final class Items {
     public static final SlimefunItemStack REFINED_SMELTERY = new SlimefunItemStack(
         "REFINED_SMELTERY",
         Material.BLAST_FURNACE,
-        "&7精煉爐"
+        "&7精煉爐",
+            "",
+            "&a&o用來精煉金屬"
     );
 
 

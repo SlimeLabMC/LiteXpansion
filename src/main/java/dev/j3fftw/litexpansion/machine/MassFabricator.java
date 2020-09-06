@@ -5,6 +5,7 @@ import dev.j3fftw.litexpansion.LiteXpansion;
 import dev.j3fftw.litexpansion.utils.Utils;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
@@ -23,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,9 +43,9 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
     private static final int[] INPUT_SLOTS = new int[] {10, 11};
     private static final int OUTPUT_SLOT = 15;
     private static final int PROGRESS_SLOT = 13;
-    private static final int PROGRESS_AMOUNT = 100; // Divide by 2 for seconds it takes
+    private static final int PROGRESS_AMOUNT = 50; // Seconds
 
-    private static final Map<BlockPosition, Integer> progress = new HashMap<>();
+    private static final Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
 
     private static final CustomItem progressItem = new CustomItem(Items.UU_MATTER.getType(), "&7進度");
 
@@ -90,43 +93,56 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
         @Nullable ItemStack input = inv.getItemInSlot(INPUT_SLOTS[0]);
         @Nullable ItemStack input2 = inv.getItemInSlot(INPUT_SLOTS[1]);
         @Nullable final ItemStack output = inv.getItemInSlot(OUTPUT_SLOT);
+        boolean i1 = true, i2 = true;
         if (output != null && output.getAmount() == output.getMaxStackSize()) return;
 
-        if (!SlimefunUtils.isItemSimilar(input, Items.SCRAP, false))
-            input = null;
-        if (!SlimefunUtils.isItemSimilar(input2, Items.SCRAP, false))
-            input2 = null;
+        if (!SlimefunUtils.isItemSimilar(input, Items.SCRAP, false)){
+            i1 = false;
+        }
+        if (!SlimefunUtils.isItemSimilar(input2, Items.SCRAP, false)){
+            i2 = false;
+        }
 
-        if (input == null && input2 == null) return;
+        if (!i1 && !i2) return;
 
         final BlockPosition pos = new BlockPosition(b.getWorld(), b.getX(), b.getY(), b.getZ());
-        int currentProgress = progress.getOrDefault(pos, 0);
 
-        if (!takePower(b)) return;
+        if(progress.containsKey(pos)){
+            int timeleft = progress.get(pos).get(0) - SlimefunPlugin.getTickerTask().getTickstamp();
+            int productleft = PROGRESS_AMOUNT - progress.get(pos).get(1);
 
-        // Process first tick - remove an input and put it in map.
-        if (currentProgress != PROGRESS_AMOUNT) {
-            if (input != null)
-                inv.consumeItem(INPUT_SLOTS[0]);
-            else
-                inv.consumeItem(INPUT_SLOTS[1]);
-            progress.put(pos, ++currentProgress);
-            ChestMenuUtils.updateProgressbar(inv, PROGRESS_SLOT, PROGRESS_AMOUNT - currentProgress,
-                PROGRESS_AMOUNT, progressItem);
+            if(timeleft > 0 || productleft > 0) {
+                int scarpAmount = 0;
+                if(i1) scarpAmount += input.getAmount();
+                if(i2) scarpAmount += input2.getAmount();
+
+                int producenow = Math.min(timeleft < 0 ? productleft : productleft - timeleft, scarpAmount);
+                int charge = ChargableBlock.getCharge(b);
+                if (charge < ENERGY_CONSUMPTION*producenow) producenow = charge / ENERGY_CONSUMPTION;
+                ChargableBlock.addCharge(b, -ENERGY_CONSUMPTION*producenow);
+
+                progress.get(pos).set(1, progress.get(pos).get(1) + producenow);
+                ChestMenuUtils.updateProgressbar(inv, PROGRESS_SLOT, Math.max(timeleft, 1), PROGRESS_AMOUNT, progressItem);
+
+                if (i1) {
+                    int minus = Math.min(input.getAmount(), producenow);
+                    inv.consumeItem(INPUT_SLOTS[0], minus);
+                    producenow -= minus;
+                }
+                if(i2 && producenow > 0){
+                    inv.consumeItem(INPUT_SLOTS[1], producenow);
+                }
+            } else {
+                inv.pushItem(Items.UU_MATTER.clone(), OUTPUT_SLOT);
+                progress.remove(pos);
+                inv.replaceExistingItem(22, progressItem);
+            }
         } else {
-            if (output != null && output.getAmount() > 0)
-                output.setAmount(output.getAmount() + 1);
-            else
-                inv.replaceExistingItem(OUTPUT_SLOT, Items.UU_MATTER.clone());
-            progress.remove(pos);
-            ChestMenuUtils.updateProgressbar(inv, PROGRESS_SLOT, PROGRESS_AMOUNT, PROGRESS_AMOUNT, progressItem);
+            if(i1) inv.consumeItem(INPUT_SLOTS[0]);
+            else inv.consumeItem(INPUT_SLOTS[1]);
+            progress.put(pos, new ArrayList<>(Arrays.asList(SlimefunPlugin.getTickerTask().getTickstamp() + PROGRESS_AMOUNT, 0)));
         }
-    }
 
-    private boolean takePower(@Nonnull Block b) {
-        if (ChargableBlock.getCharge(b) < ENERGY_CONSUMPTION) return false;
-        ChargableBlock.addCharge(b, -ENERGY_CONSUMPTION);
-        return true;
     }
 
     @Override

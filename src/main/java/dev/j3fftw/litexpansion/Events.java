@@ -16,6 +16,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Optional;
+
 public class Events implements Listener {
 
     @EventHandler
@@ -44,7 +46,7 @@ public class Events implements Listener {
                 && itemInHand.containsEnchantment(Enchantment.getByKey(Constants.NANO_BLADE_ACTIVE_ENCHANT))
                 && nanoBlade.removeItemCharge(itemInHand, 10) && Slimefun.hasUnlocked(p, nanoBlade, true)
             ) {
-                e.setDamage(e.getDamage() * 1.75);
+                e.setDamage(e.getDamage() * 3);
             }
         }
     }
@@ -53,15 +55,24 @@ public class Events implements Listener {
     public void onPlayerDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && ((Player) e.getEntity()).getEquipment() != null) {
             Player p = (Player) e.getEntity();
-            ItemStack chestplate = p.getEquipment().getChestplate();
-            final ElectricChestplate electricChestplate = (ElectricChestplate)
-                SlimefunItem.getByID(Items.ELECTRIC_CHESTPLATE.getItemId());
-            if (chestplate != null
-                && electricChestplate.isItem(chestplate)
-                && electricChestplate.removeItemCharge(chestplate, (float) (e.getDamage() / -1.75)) && Slimefun.hasUnlocked(p, electricChestplate, true)
-            ) {
-                e.setCancelled(true);
+            Optional<ItemStack> optional = Optional.ofNullable(p.getEquipment().getChestplate());
+            if(optional.isPresent()){
+                final ElectricChestplate electricChestplate = (ElectricChestplate)
+                        SlimefunItem.getByID(Items.ELECTRIC_CHESTPLATE.getItemId());
+                if (electricChestplate.isItem(optional.get())
+                        && Slimefun.hasUnlocked(p, electricChestplate, true)
+                ) {
+                    float deal = Math.min(electricChestplate.getItemCharge(optional.get()) * 1.75F, (float) e.getDamage());
+                    electricChestplate.removeItemCharge(optional.get(), deal / 1.75F);
+                    if(deal >= e.getDamage()){
+                        e.setCancelled(true);
+                    }else {
+                        e.setDamage(e.getDamage() - deal);
+                    }
+
+                }
             }
+
         }
     }
 }

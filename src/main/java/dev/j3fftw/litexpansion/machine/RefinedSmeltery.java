@@ -4,25 +4,29 @@ import dev.j3fftw.litexpansion.Items;
 import dev.j3fftw.litexpansion.LiteXpansion;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.Slimefun;
 import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Dispenser;
+import org.bukkit.block.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RefinedSmeltery extends MultiBlockMachine {
+
+    private final BlockFace[] faces = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
 
     public static final RecipeType REFINED_SMELTERY_RECIPE = new RecipeType(
         new NamespacedKey(LiteXpansion.getInstance(), "refined_smeltery"),
@@ -68,7 +72,7 @@ public class RefinedSmeltery extends MultiBlockMachine {
                     Inventory outputInv = findOutputInventory(output, dispBlock, inv);
 
                     if (outputInv != null) {
-                        craft(p, b, inv, inputs.get(i), output, outputInv);
+                        craft(p, b, inv, inputs.get(i), output, outputInv, dispBlock);
                     } else
                         SlimefunPlugin.getLocalization().sendMessage(p, "machines.full-inventory", true);
                 }
@@ -79,7 +83,7 @@ public class RefinedSmeltery extends MultiBlockMachine {
         SlimefunPlugin.getLocalization().sendMessage(p, "machines.unknown-material", true);
     }
 
-    private void craft(Player p, Block b, Inventory inv, ItemStack[] recipe, ItemStack output, Inventory outputInv) {
+    private void craft(Player p, Block b, Inventory inv, ItemStack[] recipe, ItemStack output, Inventory outputInv, Block disp) {
         for (ItemStack removing : recipe) {
             if (removing != null) {
                 InvUtils.removeItem(inv, removing.getAmount(), true, stack ->
@@ -91,6 +95,28 @@ public class RefinedSmeltery extends MultiBlockMachine {
         p.getWorld().playSound(p.getLocation(), Sound.BLOCK_LAVA_POP, 1, 1);
         p.getWorld().playEffect(b.getLocation(), Effect.MOBSPAWNER_FLAMES, 1);
 
+
+        Inventory chamber = findIgnitionChamber(disp);
+
+        if (chamber != null) {
+            if (chamber.contains(Material.FLINT_AND_STEEL)) {
+                ItemStack item = chamber.getItem(chamber.first(Material.FLINT_AND_STEEL));
+                ItemMeta meta = item.getItemMeta();
+                ((Damageable) meta).setDamage(((Damageable) meta).getDamage() + 1);
+                item.setItemMeta(meta);
+
+                if (((Damageable) item.getItemMeta()).getDamage() >= item.getType().getMaxDurability()) {
+                    item.setAmount(0);
+                    p.getWorld().playSound(p.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+                }
+
+                p.getWorld().playSound(p.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 1, 1);
+                return;
+            }
+            else {
+                SlimefunPlugin.getLocalization().sendMessage(p, "machines.ignition-chamber-no-flint", true);
+            }
+        }
         Block fire = b.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN);
         fire.getWorld().playEffect(fire.getLocation(), Effect.STEP_SOUND, fire.getType());
         fire.setType(Material.AIR);
@@ -110,6 +136,20 @@ public class RefinedSmeltery extends MultiBlockMachine {
         }
 
         return true;
+    }
+
+    private Inventory findIgnitionChamber(Block b) {
+        for (BlockFace face : faces) {
+            if (b.getRelative(face).getType() == Material.DROPPER && BlockStorage.check(b.getRelative(face), "IGNITION_CHAMBER")) {
+                BlockState state = PaperLib.getBlockState(b.getRelative(face), false).getState();
+
+                if (state instanceof Dropper) {
+                    return ((Dropper) state).getInventory();
+                }
+            }
+        }
+
+        return null;
     }
 
 }
