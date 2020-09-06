@@ -55,7 +55,7 @@ public class RubberSynthesizer extends SlimefunItem implements InventoryBlock, E
     }
 
     private void setupInv() {
-        createPreset(this, "&6Rubber Synthesizer", blockMenuPreset -> {
+        createPreset(this, "&6橡膠合成機", blockMenuPreset -> {
             for (int i = 0; i < 27; i++)
                 blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
 
