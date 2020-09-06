@@ -6,6 +6,8 @@ import dev.j3fftw.litexpansion.utils.Utils;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
@@ -13,7 +15,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import me.mrCookieSlime.Slimefun.api.energy.ChargableBlock;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
@@ -29,16 +30,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems.ADVANCED_CIRCUIT_BOARD;
-import static io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems.REINFORCED_PLATE;
-
 public class ScrapMachine extends SlimefunItem implements InventoryBlock, EnergyNetComponent {
 
     public static final RecipeType RECIPE_TYPE = new RecipeType(
         new NamespacedKey(LiteXpansion.getInstance(), "scrap_machine"), Items.SCRAP_MACHINE
     );
 
-    private static final int ENERGY_CONSUMPTION = Utils.euToJ(10);
+    public static final int ENERGY_CONSUMPTION = 100;
+    public static final int CAPACITY = 450;
 
     private static final int INPUT_SLOT = 11;
     private static final int OUTPUT_SLOT = 15;
@@ -51,9 +50,9 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
     public ScrapMachine() {
         super(Items.LITEXPANSION, Items.SCRAP_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-            ADVANCED_CIRCUIT_BOARD, REINFORCED_PLATE, ADVANCED_CIRCUIT_BOARD,
-            REINFORCED_PLATE, Items.MACHINE_BLOCK, REINFORCED_PLATE,
-            ADVANCED_CIRCUIT_BOARD, REINFORCED_PLATE, ADVANCED_CIRCUIT_BOARD
+            SlimefunItems.ADVANCED_CIRCUIT_BOARD, SlimefunItems.REINFORCED_PLATE, SlimefunItems.ADVANCED_CIRCUIT_BOARD,
+            SlimefunItems.REINFORCED_PLATE, Items.MACHINE_BLOCK, SlimefunItems.REINFORCED_PLATE,
+            SlimefunItems.ADVANCED_CIRCUIT_BOARD, SlimefunItems.REINFORCED_PLATE, SlimefunItems.ADVANCED_CIRCUIT_BOARD
         });
         setupInv();
     }
@@ -88,7 +87,6 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
         if (inv == null) return;
 
         @Nullable final ItemStack input = inv.getItemInSlot(INPUT_SLOT);
-        @Nullable final ItemStack output = inv.getItemInSlot(OUTPUT_SLOT);
 
         final BlockPosition pos = new BlockPosition(b.getWorld(), b.getX(), b.getY(), b.getZ());
 
@@ -98,9 +96,9 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
             if(timeleft > 0 || productleft > 0){
                 int producenow = timeleft < 0 ? productleft : productleft - timeleft;
-                int charge = ChargableBlock.getCharge(b);
+                int charge = getCharge(b.getLocation());
                 if (charge < ENERGY_CONSUMPTION*producenow) producenow = charge / ENERGY_CONSUMPTION;
-                ChargableBlock.addCharge(b, -ENERGY_CONSUMPTION*producenow);
+                removeCharge(b.getLocation(), ENERGY_CONSUMPTION*producenow);
 
                 progress.get(pos).set(1, progress.get(pos).get(1) + producenow);
                 ChestMenuUtils.updateProgressbar(inv, PROGRESS_SLOT, Math.max(timeleft, 1), PROGRESS_AMOUNT,
@@ -123,7 +121,7 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
     @Override
     public int getCapacity() {
-        return Utils.euToJ(45);
+        return CAPACITY;
     }
 
     @Override

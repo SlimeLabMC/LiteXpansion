@@ -24,15 +24,7 @@ public class Events implements Listener {
     public void onHunger(FoodLevelChangeEvent e) {
         Player p = (Player) e.getEntity();
         if (e.getFoodLevel() < p.getFoodLevel()) {
-            FoodSynthesizer foodSynth = (FoodSynthesizer) SlimefunItem.getByID(Items.FOOD_SYNTHESIZER.getItemId());
-            for (ItemStack item : p.getInventory().getContents()) {
-                if (foodSynth.isItem(item) && foodSynth.removeItemCharge(item, 3F) && Slimefun.hasUnlocked(p, foodSynth, true)) {
-                    p.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EAT, 1.5F, 1F);
-                    e.setFoodLevel(20);
-                    p.setSaturation(5);
-                    break;
-                }
-            }
+            checkAndConsume(p, e);
         }
     }
 
@@ -43,7 +35,7 @@ public class Events implements Listener {
             ItemStack itemInHand = p.getInventory().getItemInMainHand();
             final NanoBlade nanoBlade = (NanoBlade) SlimefunItem.getByID(Items.NANO_BLADE.getItemId());
             if (nanoBlade.isItem(itemInHand)
-                && itemInHand.containsEnchantment(Enchantment.getByKey(Constants.NANO_BLADE_ACTIVE_ENCHANT))
+                && itemInHand.containsEnchantment(Enchantment.getByKey(Constants.GLOW_ENCHANT))
                 && nanoBlade.removeItemCharge(itemInHand, 10) && Slimefun.hasUnlocked(p, nanoBlade, true)
             ) {
                 e.setDamage(e.getDamage() * 3);
@@ -57,8 +49,7 @@ public class Events implements Listener {
             Player p = (Player) e.getEntity();
             Optional<ItemStack> optional = Optional.ofNullable(p.getEquipment().getChestplate());
             if(optional.isPresent()){
-                final ElectricChestplate electricChestplate = (ElectricChestplate)
-                        SlimefunItem.getByID(Items.ELECTRIC_CHESTPLATE.getItemId());
+                final ElectricChestplate electricChestplate = (ElectricChestplate) Items.ELECTRIC_CHESTPLATE.getItem();
                 if (electricChestplate.isItem(optional.get())
                         && Slimefun.hasUnlocked(p, electricChestplate, true)
                 ) {
@@ -73,6 +64,33 @@ public class Events implements Listener {
                 }
             }
 
+        }
+    }
+
+    @EventHandler
+    public void onHungerDamage(EntityDamageEvent e) {
+        if (Items.FOOD_SYNTHESIZER == null || Items.FOOD_SYNTHESIZER.getItem().isDisabled()
+            || !(e.getEntity() instanceof Player)) {
+            return;
+        }
+
+        if (e.getCause() == EntityDamageEvent.DamageCause.STARVATION) {
+            checkAndConsume((Player) e.getEntity(), null);
+        }
+    }
+
+    public void checkAndConsume(Player p, FoodLevelChangeEvent e) {
+        FoodSynthesizer foodSynth = (FoodSynthesizer) Items.FOOD_SYNTHESIZER.getItem();
+        for (ItemStack item : p.getInventory().getContents()) {
+            if (foodSynth.isItem(item) && foodSynth.removeItemCharge(item, 3F) && Slimefun.hasUnlocked(p, foodSynth, true)) {
+                p.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EAT, 1.5F, 1F);
+                e.setFoodLevel(20);
+                p.setSaturation(5);
+                if (e != null) {
+                    e.setFoodLevel(20);
+                }
+                break;
+            }
         }
     }
 }

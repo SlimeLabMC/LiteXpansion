@@ -39,7 +39,7 @@ public class NanoBlade extends SimpleSlimefunItem<ItemUseHandler> implements Rec
     @Override
     public ItemUseHandler getItemHandler() {
         return event -> {
-            final Enchantment enchantment = Enchantment.getByKey(Constants.NANO_BLADE_ACTIVE_ENCHANT);
+            final Enchantment enchantment = Enchantment.getByKey(Constants.GLOW_ENCHANT);
             final int removedLevel = event.getItem().removeEnchantment(enchantment);
 
             if (removedLevel == 0) {

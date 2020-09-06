@@ -1,16 +1,19 @@
 package dev.j3fftw.litexpansion;
 
-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
-public class NanoBladeActiveEnchant extends Enchantment {
+@SuppressWarnings("NullableProblems")
+public class GlowEnchant extends Enchantment {
 
-    public NanoBladeActiveEnchant(NamespacedKey key) {
+    public GlowEnchant(NamespacedKey key) {
         super(key);
     }
 
@@ -18,7 +21,7 @@ public class NanoBladeActiveEnchant extends Enchantment {
     @Override
     @Deprecated
     public String getName() {
-        return "Active";
+        return "LX_Glow";
     }
 
     @Override
@@ -33,7 +36,7 @@ public class NanoBladeActiveEnchant extends Enchantment {
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        return EnchantmentTarget.WEAPON;
+        return EnchantmentTarget.ALL;
     }
 
     @Override
@@ -53,7 +56,16 @@ public class NanoBladeActiveEnchant extends Enchantment {
     }
 
     @Override
-    public boolean canEnchantItem(ItemStack itemStack) {
-        return SlimefunUtils.isItemSimilar(itemStack, Items.NANO_BLADE, false);
+    public boolean canEnchantItem(ItemStack item) {
+        if (item.hasItemMeta()) {
+            final ItemMeta itemMeta = item.getItemMeta();
+            final Optional<String> id = SlimefunPlugin.getItemDataService().getItemData(itemMeta);
+            if (id.isPresent()) {
+                return id.get().equals(Items.ADVANCED_CIRCUIT.getItemId())
+                    || id.get().equals(Items.NANO_BLADE.getItemId());
+            }
+        }
+        return false;
     }
+
 }

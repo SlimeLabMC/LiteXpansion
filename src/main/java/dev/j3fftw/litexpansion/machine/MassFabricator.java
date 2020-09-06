@@ -14,7 +14,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import me.mrCookieSlime.Slimefun.api.energy.ChargableBlock;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
@@ -38,7 +37,8 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
         new NamespacedKey(LiteXpansion.getInstance(), "mass_fabricator"), Items.MASS_FABRICATOR_MACHINE
     );
 
-    private static final int ENERGY_CONSUMPTION = Utils.euToJ(166_666 / 100);
+    public static final int ENERGY_CONSUMPTION = 16_666;
+    public static final int CAPACITY = ENERGY_CONSUMPTION * 3;
 
     private static final int[] INPUT_SLOTS = new int[] {10, 11};
     private static final int OUTPUT_SLOT = 15;
@@ -117,9 +117,9 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
                 if(i2) scarpAmount += input2.getAmount();
 
                 int producenow = Math.min(timeleft < 0 ? productleft : productleft - timeleft, scarpAmount);
-                int charge = ChargableBlock.getCharge(b);
+                int charge = getCharge(b.getLocation());
                 if (charge < ENERGY_CONSUMPTION*producenow) producenow = charge / ENERGY_CONSUMPTION;
-                ChargableBlock.addCharge(b, -ENERGY_CONSUMPTION*producenow);
+                removeCharge(b.getLocation(), ENERGY_CONSUMPTION*producenow);
 
                 progress.get(pos).set(1, progress.get(pos).get(1) + producenow);
                 ChestMenuUtils.updateProgressbar(inv, PROGRESS_SLOT, Math.max(timeleft, 1), PROGRESS_AMOUNT, progressItem);
@@ -152,7 +152,7 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
 
     @Override
     public int getCapacity() {
-        return ENERGY_CONSUMPTION * 3;
+        return CAPACITY;
     }
 
     @Override

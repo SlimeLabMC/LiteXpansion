@@ -2,6 +2,10 @@ package dev.j3fftw.litexpansion;
 
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
+import dev.j3fftw.litexpansion.machine.AdvancedSolarPanel;
+import dev.j3fftw.litexpansion.machine.RubberSynthesizer;
+import dev.j3fftw.litexpansion.utils.Constants;
+import dev.j3fftw.litexpansion.utils.LoreBuilderDynamic;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -11,6 +15,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.skull.SkullItem;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 
 public final class Items {
 
@@ -93,7 +98,6 @@ public final class Items {
     );
 
     // Items
-
     public static final SlimefunItemStack FOOD_SYNTHESIZER = new SlimefunItemStack(
         "FOOD_SYNTHESIZER",
         new CustomItem(SkullItem.fromHash("a11a2df7d37af40ed5ce442fd2d78cd8ebcdcdc029d2ae691a2b64395cdf"),
@@ -196,7 +200,6 @@ public final class Items {
         "&7電子晶片"
     );
 
-    //todo make it enchanted
     public static final SlimefunItemStack ADVANCED_CIRCUIT = new SlimefunItemStack(
         "ADVANCED_CIRCUIT",
         Material.COBWEB,
@@ -279,6 +282,55 @@ public final class Items {
         "&7混合金屬錠"
     );
 
+    public static final SlimefunItemStack RUBBER_SYNTHESIZER_MACHINE = new SlimefunItemStack(
+        "RUBBER_SYNTHESIZER_MACHINE",
+        Material.ORANGE_CONCRETE,
+        "&6橡膠合成機",
+        "",
+        "&f將燃料桶轉換為 &7橡膠",
+        "",
+        LoreBuilderDynamic.powerBuffer(RubberSynthesizer.CAPACITY),
+        LoreBuilderDynamic.powerPerTick(RubberSynthesizer.ENERGY_CONSUMPTION)
+    );
+
+    //// Solar panels
+    public static final SlimefunItemStack ADVANCED_SOLAR_PANEL = new SlimefunItemStack(
+        "ADVANCED_SOLAR_PANEL",
+        "afdd9e588d2461d2d3d058cb3e0af2b3a3367607aa14d124ed92a833f25fb112",
+        "&7&l太陽能電池",
+        "",
+        "&9可以在夜間工作",
+        "",
+        LoreBuilderDynamic.powerBuffer(AdvancedSolarPanel.ADVANCED_STORAGE),
+        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ADVANCED_DAY_RATE) + " (日間)",
+        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ADVANCED_NIGHT_RATE) + " (夜間)"
+    );
+
+    public static final SlimefunItemStack HYBRID_SOLAR_PANEL = new SlimefunItemStack(
+        "HYBRID_SOLAR_PANEL",
+        "240775c3ad75763613f32f04986881bbe4eee4366d0c57f17f7c7514e2d0a77d",
+        "&b&l單晶矽太陽能電池",
+            "",
+            "&9可以在夜間工作",
+        "",
+        LoreBuilderDynamic.powerBuffer(AdvancedSolarPanel.HYBRID_STORAGE),
+        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.HYBRID_DAY_RATE) + " (日間 + 地獄)",
+        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.HYBRID_NIGHT_RATE) + " (夜間 + 終界)"
+    );
+
+    public static final SlimefunItemStack ULTIMATE_SOLAR_PANEL = new SlimefunItemStack(
+        "ULTIMATE_SOLAR_PANEL",
+        "c4fe135c311f7086edcc5e6dbc4ef4b23f819fddaa42f827dac46e3574de2287",
+        "&5&l混合式太陽能電池",
+            "",
+            "&9可以在夜間工作",
+        "",
+        LoreBuilderDynamic.powerBuffer(AdvancedSolarPanel.ULTIMATE_STORAGE),
+        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ULTIMATE_DAY_RATE) + " (日間)",
+        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ULTIMATE_NIGHT_RATE) + " (夜間)"
+    );
+
+    //Basic Machines
     public static final SlimefunItemStack REFINED_SMELTERY = new SlimefunItemStack(
         "REFINED_SMELTERY",
         Material.BLAST_FURNACE,
@@ -287,6 +339,9 @@ public final class Items {
             "&a&o用來精煉金屬"
     );
 
+    static {
+        ADVANCED_CIRCUIT.addEnchantment(Enchantment.getByKey(Constants.GLOW_ENCHANT), 1);
+    }
 
     private Items() {}
 }
