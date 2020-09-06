@@ -15,7 +15,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.api.energy.ChargableBlock;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import org.bukkit.Location;
@@ -31,7 +30,7 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
 
     private static final int PROGRESS_SLOT = 4;
     private static final CustomItem generatingItem = new CustomItem(Material.ORANGE_STAINED_GLASS_PANE,
-        "&cNot Generating..."
+            "&c未在生產狀態"
     );
     public static int ADVANCED_DAY_RATE = 80;
     public static int ADVANCED_NIGHT_RATE = 10;
@@ -48,50 +47,49 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
     private final Type type;
 
     public AdvancedSolarPanel(Type type) {
-        super(Items.LITEXPANSION, type.getItem(), RecipeType.ENHANCED_CRAFTING_TABLE, type.getRecipe());
+        super(Items.LITEXPANSION, type.item, RecipeType.ENHANCED_CRAFTING_TABLE, type.recipe);
         this.type = type;
 
-        createPreset(this, type.getItem().getImmutableMeta().getDisplayName().orElse("&7Solar Panel"),
-            blockMenuPreset -> {
-                for (int i = 0; i < 9; i++)
-                    blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
+        createPreset(this, type.item.getImmutableMeta().getDisplayName().orElse("&7"),
+                blockMenuPreset -> {
+                    for (int i = 0; i < 9; i++)
+                        blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
 
-                blockMenuPreset.addItem(PROGRESS_SLOT, generatingItem);
-            });
+                    blockMenuPreset.addItem(PROGRESS_SLOT, generatingItem);
+                });
     }
 
     @Override
-    public int getGeneratedOutput(Location l, Config data) {
+    public int getGeneratedOutput(@Nonnull Location l, @Nonnull Config data) {
         @Nullable final BlockMenu inv = BlockStorage.getInventory(l);
         if (inv == null) return 0;
 
-        final int stored = ChargableBlock.getCharge(l);
+        final int stored = getCharge(l);
         final boolean canGenerate = stored < getCapacity();
         final int rate = canGenerate ? getGeneratingAmount(inv.getBlock(), l.getWorld()) : 0;
 
-        String generationType = "&4Unknown";
+        String generationType = "&4未知";
 
         if (l.getWorld().getEnvironment() == World.Environment.NETHER) {
-            generationType = "&cNether &e(Day)";
+            generationType = "&c地獄 &e(日間)";
         } else if (l.getWorld().getEnvironment() == World.Environment.THE_END) {
-            generationType = "&5End &8(Night)";
-        } else if (rate == this.type.getDayGenerationRate()) {
-            generationType = "&aOverworld &e(Day)";
-        } else if (rate == this.type.getNightGenerationRate()) {
-            generationType = "&aOverworld &8(Night)";
+            generationType = "&5終界 &8(夜間)";
+        } else if (rate == this.type.dayGenerationRate) {
+            generationType = "&e日間)";
+        } else if (rate == this.type.nightGenerationRate) {
+            generationType = "&8夜間";
         }
 
         if (inv.toInventory() != null && !inv.toInventory().getViewers().isEmpty()) {
             inv.replaceExistingItem(PROGRESS_SLOT,
-                canGenerate ? new CustomItem(Material.GREEN_STAINED_GLASS_PANE, "&aGenerating",
-                    "", "&bRate: " + generationType,
-                    "&7Generating at &6" + Utils.powerFormatAndFadeDecimals(Utils.perTickToPerSecond(rate)) + " J/s " +
-                        "&8(" + rate + " J/t)",
-                    "", "&7Stored: &6" + Utils.powerFormatAndFadeDecimals(stored + rate) + " J"
-                )
-                    : new CustomItem(Material.ORANGE_STAINED_GLASS_PANE, "&cNot Generating",
-                    "", "&7Generator has reached maximum capacity.",
-                    "", "&7Stored: &6" + Utils.powerFormatAndFadeDecimals(stored) + " J")
+                    canGenerate ? new CustomItem(Material.GREEN_STAINED_GLASS_PANE, "&a發電中",
+                            "", "&b效率: " + generationType,
+                            " &6" + Utils.powerFormatAndFadeDecimals(Utils.perTickToPerSecond(rate)) + " J/s " +
+                                    "", "&7已儲存: &6" + Utils.powerFormatAndFadeDecimals(stored + rate) + " J"
+                    )
+                            : new CustomItem(Material.ORANGE_STAINED_GLASS_PANE, "&c待機中",
+                            "", "&7已達到最大儲存量",
+                            "", "&7已儲存: &6" + Utils.powerFormatAndFadeDecimals(stored) + " J")
             );
         }
 
@@ -99,24 +97,25 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
     }
 
     @Override
-    public boolean willExplode(Location l, Config data) {
+    public boolean willExplode(@Nonnull Location l, @Nonnull Config data) {
         return false;
     }
 
     private int getGeneratingAmount(@Nonnull Block b, @Nonnull World world) {
-        if (world.getEnvironment() == World.Environment.NETHER) return this.type.getDayGenerationRate();
-        if (world.getEnvironment() == World.Environment.THE_END) return this.type.getNightGenerationRate();
+        if (world.getEnvironment() == World.Environment.NETHER) return this.type.dayGenerationRate;
+        if (world.getEnvironment() == World.Environment.THE_END) return this.type.nightGenerationRate;
 
         // Note: You need to get the block above for the light check, the block itself is always 0
         if (world.isThundering() || world.hasStorm() || world.getTime() >= 13000
-            || b.getLocation().add(0, 1, 0).getBlock().getLightFromSky() != 15
+                || b.getLocation().add(0, 1, 0).getBlock().getLightFromSky() != 15
         ) {
-            return this.type.getNightGenerationRate();
+            return this.type.nightGenerationRate;
         } else {
-            return this.type.getDayGenerationRate();
+            return this.type.dayGenerationRate;
         }
     }
 
+    @Nonnull
     @Override
     public EnergyNetComponentType getEnergyComponentType() {
         return EnergyNetComponentType.GENERATOR;
@@ -124,7 +123,7 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
 
     @Override
     public int getCapacity() {
-        return this.type.getStorage();
+        return this.type.storage;
     }
 
     @Override
@@ -142,24 +141,24 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
     public enum Type {
 
         ADVANCED(Items.ADVANCED_SOLAR_PANEL, ADVANCED_DAY_RATE, ADVANCED_NIGHT_RATE, ADVANCED_OUTPUT,
-            ADVANCED_STORAGE, new ItemStack[] {
-            Items.REINFORCED_GLASS, Items.REINFORCED_GLASS, Items.REINFORCED_GLASS,
-            Items.ADVANCED_ALLOY, SlimefunItems.SOLAR_GENERATOR_4, Items.ADVANCED_ALLOY,
-            SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.ADVANCED_MACHINE_BLOCK, SlimefunItems.ADVANCED_CIRCUIT_BOARD
+                ADVANCED_STORAGE, new ItemStack[] {
+                Items.REINFORCED_GLASS, Items.REINFORCED_GLASS, Items.REINFORCED_GLASS,
+                Items.ADVANCED_ALLOY, SlimefunItems.SOLAR_GENERATOR_4, Items.ADVANCED_ALLOY,
+                SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.ADVANCED_MACHINE_BLOCK, SlimefunItems.ADVANCED_CIRCUIT_BOARD
         }),
 
         HYBRID(Items.HYBRID_SOLAR_PANEL, HYBRID_DAY_RATE, HYBRID_NIGHT_RATE, HYBRID_OUTPUT, HYBRID_STORAGE,
-            new ItemStack[] {
-            Items.CARBON_PLATE, new ItemStack(Material.LAPIS_BLOCK), Items.CARBON_PLATE,
-            Items.IRIDIUM_PLATE, Items.ADVANCED_MACHINE_BLOCK, Items.IRIDIUM_PLATE,
-            SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.IRIDIUM_PLATE, SlimefunItems.ADVANCED_CIRCUIT_BOARD
-        }),
+                new ItemStack[] {
+                        Items.CARBON_PLATE, new ItemStack(Material.LAPIS_BLOCK), Items.CARBON_PLATE,
+                        Items.IRIDIUM_PLATE, Items.ADVANCED_MACHINE_BLOCK, Items.IRIDIUM_PLATE,
+                        SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.IRIDIUM_PLATE, SlimefunItems.ADVANCED_CIRCUIT_BOARD
+                }),
 
         ULTIMATE(Items.ULTIMATE_SOLAR_PANEL, ULTIMATE_DAY_RATE, ULTIMATE_NIGHT_RATE, ULTIMATE_OUTPUT,
-            ULTIMATE_STORAGE, new ItemStack[] {
-            Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL,
-            Items.HYBRID_SOLAR_PANEL, SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.HYBRID_SOLAR_PANEL,
-            Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL,
+                ULTIMATE_STORAGE, new ItemStack[] {
+                Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL,
+                Items.HYBRID_SOLAR_PANEL, SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.HYBRID_SOLAR_PANEL,
+                Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL,
         });
 
         @Nonnull
@@ -171,5 +170,14 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
 
         @Nonnull
         private final ItemStack[] recipe;
+
+        Type(SlimefunItemStack advancedSolarPanel, int advancedDayRate, int advancedNightRate, int advancedOutput, int advancedStorage, ItemStack[] itemStacks) {
+            this.item = advancedSolarPanel;
+            this.dayGenerationRate = advancedDayRate;
+            this.nightGenerationRate = advancedNightRate;
+            this.output = advancedOutput;
+            this.storage = advancedStorage;
+            this.recipe = itemStacks;
+        }
     }
 }
