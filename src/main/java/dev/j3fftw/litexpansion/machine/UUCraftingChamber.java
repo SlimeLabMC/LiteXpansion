@@ -2,6 +2,8 @@ package dev.j3fftw.litexpansion.machine;
 
 import java.util.*;
 
+import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -41,8 +43,6 @@ public abstract class UUCraftingChamber extends SlimefunItem implements Inventor
     private final int[] border = { 0, 1, 3, 4, 5, 7, 8, 13, 14, 15, 16, 17, 50, 51, 52, 53 };
     private final int[] inputBorder = { 9, 10, 12, 13, 18, 22, 27, 31, 36, 40, 45, 46, 47, 48, 49 };
     private final int[] outputBorder = { 23, 24, 25, 26, 32, 35, 41, 42, 43, 44 };
-    private final List<Tag<Material>> Wooden = Arrays.asList(Tag.WOODEN_FENCES, Tag.WOODEN_BUTTONS, Tag.WOODEN_DOORS, Tag.WOODEN_PRESSURE_PLATES
-            , Tag.WOODEN_SLABS, Tag.WOODEN_STAIRS, Tag.WOODEN_TRAPDOORS, Tag.SIGNS, Tag.ITEMS_BOATS, Tag.PLANKS);
 
     public UUCraftingChamber(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -72,12 +72,6 @@ public abstract class UUCraftingChamber extends SlimefunItem implements Inventor
                         return false;
                     });
                 }
-
-                menu.replaceExistingItem(7, new CustomItem(Material.CRAFTING_TABLE, "&7製作剩餘物品", "", "&e> 點擊來合成輸入欄位最後剩下的材料"));
-                menu.addMenuClickHandler(7, (p, slot, item, action) -> {
-                    tick(b, true);
-                    return false;
-                });
             }
 
             @Override
