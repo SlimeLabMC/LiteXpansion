@@ -6,12 +6,23 @@ import dev.j3fftw.litexpansion.utils.Constants;
 import dev.j3fftw.litexpansion.uumatter.UUMatter;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
+import me.mrCookieSlime.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
 public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
 
@@ -71,11 +82,6 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
 
         // Tools
         /*
-        registerItem(Items.WRENCH, RecipeType.ENHANCED_CRAFTING_TABLE,
-            SlimefunItems.BRONZE_INGOT, null, SlimefunItems.BRONZE_INGOT,
-            null, SlimefunItems.BRONZE_INGOT, null,
-            null, SlimefunItems.BRONZE_INGOT, null
-        );
 
         registerItem(Items.TREETAP, RecipeType.ENHANCED_CRAFTING_TABLE,
             null, new ItemStack(Material.OAK_PLANKS), null,
@@ -115,6 +121,36 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
             .register();
     }
 
+    private void setupCustomMetrics(@Nonnull Metrics metrics) {
+        metrics.addCustomChart(new Metrics.AdvancedPie("blocks_placed", () -> {
+            final Map<String, Integer> data = new HashMap<>();
+            try {
+                Class<?> blockStorage = Class.forName("me.mrCookieSlime.Slimefun.api.BlockStorage");
+
+                for (World world : Bukkit.getWorlds()) {
+                    final BlockStorage storage = BlockStorage.getStorage(world);
+                    if (storage == null) continue;
+
+                    final Field f = blockStorage.getDeclaredField("storage");
+                    f.setAccessible(true);
+                    @SuppressWarnings("unchecked") final Map<Location, Config> blocks =
+                        (Map<Location, Config>) f.get(storage);
+
+                    for (Map.Entry<Location, Config> entry : blocks.entrySet()) {
+                        final SlimefunItem item = SlimefunItem.getByID(entry.getValue().getString("id"));
+                        if (item == null || !(item.getAddon() instanceof LiteXpansion)) continue;
+
+                        data.merge(item.getID(), 1, Integer::sum);
+                    }
+                }
+            } catch (ReflectiveOperationException e) {
+                getLogger().log(Level.WARNING, "Failed to load placed blocks", e);
+            }
+            return data;
+        }));
+    }
+
+    @Nonnull
     public JavaPlugin getJavaPlugin() {
         return this;
     }

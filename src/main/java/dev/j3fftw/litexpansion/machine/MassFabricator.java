@@ -17,6 +17,7 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -145,6 +146,7 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
 
     }
 
+    @Nonnull
     @Override
     public EnergyNetComponentType getEnergyComponentType() {
         return EnergyNetComponentType.CONSUMER;

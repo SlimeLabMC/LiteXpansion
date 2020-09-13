@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.UUID;
+import javax.annotation.Nonnull;
 
 public class NanoBlade extends SimpleSlimefunItem<ItemUseHandler> implements Rechargeable {
 
@@ -36,6 +37,7 @@ public class NanoBlade extends SimpleSlimefunItem<ItemUseHandler> implements Rec
         return 500;
     }
 
+    @Nonnull
     @Override
     public ItemUseHandler getItemHandler() {
         return event -> {
