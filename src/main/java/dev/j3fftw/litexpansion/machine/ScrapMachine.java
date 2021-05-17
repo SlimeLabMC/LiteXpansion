@@ -46,7 +46,7 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
     private static final Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
 
-    private static final CustomItem progressItem = new CustomItem(Material.DEAD_BUSH, "&7進度");
+    private static final CustomItem progressItem = new CustomItem(Material.DEAD_BUSH, "&7待機中");
 
     public ScrapMachine() {
         super(Items.LITEXPANSION, Items.SCRAP_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -55,6 +55,17 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
             SlimefunItems.ADVANCED_CIRCUIT_BOARD, SlimefunItems.REINFORCED_PLATE, SlimefunItems.ADVANCED_CIRCUIT_BOARD
         });
         setupInv();
+        registerBlockHandler(getID(), (p, b, stack, reason) -> {
+            BlockMenu inv = BlockStorage.getInventory(b);
+
+            if (inv != null) {
+                inv.dropItems(b.getLocation(), INPUT_SLOT);
+                inv.dropItems(b.getLocation(), OUTPUT_SLOT);
+            }
+            progress.remove(new BlockPosition(b.getWorld(), b.getX(), b.getY(), b.getZ()));
+
+            return true;
+        });
     }
 
     private void setupInv() {

@@ -2,6 +2,7 @@ package dev.j3fftw.litexpansion.uumatter;
 
 import dev.j3fftw.litexpansion.Items;
 import dev.j3fftw.litexpansion.LiteXpansion;
+import dev.j3fftw.litexpansion.machine.UUCraftingChamber;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
@@ -91,7 +92,7 @@ public final class UuMatterCategory extends FlexCategory {
         }
 
         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1, 1);
-        menu.addItem(19, RecipeType.ENHANCED_CRAFTING_TABLE.getItem(p), ChestMenuUtils.getEmptyClickHandler());
+        menu.addItem(19, UUCraftingChamber.Recipetype, ChestMenuUtils.getEmptyClickHandler());
         menu.addItem(25, output, ChestMenuUtils.getEmptyClickHandler());
     }
 

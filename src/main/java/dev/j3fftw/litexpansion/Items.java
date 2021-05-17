@@ -1,11 +1,9 @@
 package dev.j3fftw.litexpansion;
 
+import dev.j3fftw.litexpansion.machine.*;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
-import dev.j3fftw.litexpansion.machine.AdvancedSolarPanel;
-import dev.j3fftw.litexpansion.machine.RubberSynthesizer;
 import dev.j3fftw.litexpansion.utils.Constants;
-import dev.j3fftw.litexpansion.utils.LoreBuilderDynamic;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.Objects.Category;
@@ -88,7 +86,8 @@ public final class Items {
             "&f處理各種物質轉變為 &8廢料",
             "",
             LoreBuilder.machine(MachineTier.END_GAME, MachineType.MACHINE),
-            LoreBuilder.powerPerSecond(450)
+            LoreBuilder.powerBuffer(ScrapMachine.CAPACITY),
+            LoreBuilder.powerPerSecond(ScrapMachine.ENERGY_CONSUMPTION)
     );
 
     public static final SlimefunItemStack MASS_FABRICATOR_MACHINE = new SlimefunItemStack(
@@ -100,7 +99,21 @@ public final class Items {
             "&f將 &8廢料 &f強制轉換為 &5通用物質",
             "",
             LoreBuilder.machine(MachineTier.END_GAME, MachineType.MACHINE),
-            LoreBuilder.powerPerSecond(16666)
+            LoreBuilder.powerBuffer(MassFabricator.CAPACITY),
+            LoreBuilder.powerPerSecond(MassFabricator.ENERGY_CONSUMPTION)
+    );
+    public static final SlimefunItemStack UU_CRAFTING_CHAMBER = new SlimefunItemStack(
+            "UU_CRAFTING_CHAMBER",
+            new CustomItem(SkullItem.fromHash("5b78e55e3ea6b3682bd7cead43eb1c91b2527a81aa2894f095801f6ee47a3"),
+                    "通用物質合成機"),
+            "&6通用物質合成機",
+            "",
+            "&f將 &5通用物質 &f按照合成表加工為普通物質",
+            "",
+            LoreBuilder.machine(MachineTier.END_GAME, MachineType.MACHINE),
+            LoreBuilder.power(UUCraftingChamber.ENERGY_CONSUMPTION, "/次合成"),
+            LoreBuilder.powerBuffer(UUCraftingChamber.CAPACITY)
+
     );
     // Items
     public static final SlimefunItemStack FOOD_SYNTHESIZER = new SlimefunItemStack(
@@ -262,13 +275,14 @@ public final class Items {
     );
     public static final SlimefunItemStack RUBBER_SYNTHESIZER_MACHINE = new SlimefunItemStack(
         "RUBBER_SYNTHESIZER_MACHINE",
-        Material.ORANGE_CONCRETE,
+        "55c855f1a345e9806c3a01c851906793181908bed9b96baddbbe9d7fd963b937",
         "&6橡膠合成機",
         "",
         "&f將燃料桶轉換為 &7橡膠",
         "",
-        LoreBuilderDynamic.powerBuffer(RubberSynthesizer.CAPACITY),
-        LoreBuilderDynamic.powerPerTick(RubberSynthesizer.ENERGY_CONSUMPTION)
+        LoreBuilder.machine(MachineTier.AVERAGE, MachineType.MACHINE),
+        LoreBuilder.powerBuffer(RubberSynthesizer.CAPACITY),
+        LoreBuilder.powerPerSecond(RubberSynthesizer.ENERGY_CONSUMPTION)
     );
     //// Solar panels
     public static final SlimefunItemStack ADVANCED_SOLAR_PANEL = new SlimefunItemStack(
@@ -278,9 +292,10 @@ public final class Items {
         "",
         "&9可以在夜間工作",
         "",
-        LoreBuilderDynamic.powerBuffer(AdvancedSolarPanel.ADVANCED_STORAGE),
-        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ADVANCED_DAY_RATE) + " (日間)",
-        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ADVANCED_NIGHT_RATE) + " (夜間)"
+        LoreBuilder.machine(MachineTier.END_GAME, MachineType.GENERATOR),
+        LoreBuilder.powerBuffer(AdvancedSolarPanel.ADVANCED_STORAGE),
+        LoreBuilder.powerPerSecond(AdvancedSolarPanel.ADVANCED_DAY_RATE) + " (日間)",
+        LoreBuilder.powerPerSecond(AdvancedSolarPanel.ADVANCED_NIGHT_RATE) + " (夜間)"
     );
     public static final SlimefunItemStack HYBRID_SOLAR_PANEL = new SlimefunItemStack(
         "HYBRID_SOLAR_PANEL",
@@ -289,9 +304,10 @@ public final class Items {
             "",
             "&9可以在夜間工作",
         "",
-        LoreBuilderDynamic.powerBuffer(AdvancedSolarPanel.HYBRID_STORAGE),
-        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.HYBRID_DAY_RATE) + " (日間 + 地獄)",
-        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.HYBRID_NIGHT_RATE) + " (夜間 + 終界)"
+        LoreBuilder.machine(MachineTier.END_GAME, MachineType.GENERATOR),
+        LoreBuilder.powerBuffer(AdvancedSolarPanel.HYBRID_STORAGE),
+        LoreBuilder.powerPerSecond(AdvancedSolarPanel.HYBRID_DAY_RATE) + " (日間 + 地獄)",
+        LoreBuilder.powerPerSecond(AdvancedSolarPanel.HYBRID_NIGHT_RATE) + " (夜間 + 終界)"
     );
     public static final SlimefunItemStack ULTIMATE_SOLAR_PANEL = new SlimefunItemStack(
         "ULTIMATE_SOLAR_PANEL",
@@ -300,9 +316,10 @@ public final class Items {
             "",
             "&9可以在夜間工作",
         "",
-        LoreBuilderDynamic.powerBuffer(AdvancedSolarPanel.ULTIMATE_STORAGE),
-        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ULTIMATE_DAY_RATE) + " (日間)",
-        LoreBuilderDynamic.powerPerTick(AdvancedSolarPanel.ULTIMATE_NIGHT_RATE) + " (夜間)"
+        LoreBuilder.machine(MachineTier.END_GAME, MachineType.GENERATOR),
+        LoreBuilder.powerBuffer(AdvancedSolarPanel.ULTIMATE_STORAGE),
+        LoreBuilder.powerPerSecond(AdvancedSolarPanel.ULTIMATE_DAY_RATE) + " (日間)",
+        LoreBuilder.powerPerSecond(AdvancedSolarPanel.ULTIMATE_NIGHT_RATE) + " (夜間)"
     );
     //Basic Machines
     public static final SlimefunItemStack REFINED_SMELTERY = new SlimefunItemStack(

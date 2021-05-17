@@ -40,6 +40,7 @@ final class ItemSetup {
         registerMiscItems();
         registerEndgameItems();
         registerCarbonStuff();
+        registerSolarPanels();
     }
 
     private void registerTools() {
@@ -48,10 +49,11 @@ final class ItemSetup {
     }
 
     private void registerMachines() {
-        new FoodSynthesizer().register(LiteXpansion.getInstance());
-        new ScrapMachine().register(LiteXpansion.getInstance());
-        new MassFabricator().register(LiteXpansion.getInstance());
-        new RefinedSmeltery().register(LiteXpansion.getInstance());
+        new FoodSynthesizer().register(plugin);
+        new ScrapMachine().register(plugin);
+        new MassFabricator().register(plugin);
+        new RefinedSmeltery().register(plugin);
+        new UUCraftingChamber().register(plugin);
     }
 
     //Disable when SlimyTreeTaps exists
@@ -59,7 +61,7 @@ final class ItemSetup {
         if (!Bukkit.getServer().getPluginManager().isPluginEnabled("SlimyTreeTaps")) {
             //Rubber
             registerNonPlaceableItem(Items.RUBBER, RubberSynthesizer.RECIPE_TYPE, SlimefunItems.OIL_BUCKET);
-            new RubberSynthesizer().register(LiteXpansion.getInstance());
+            new RubberSynthesizer().register(plugin);
         }
     }
 
@@ -180,7 +182,7 @@ final class ItemSetup {
                         null, items[0], null,
                         null, null, null
                 };
-                new SlimefunItem(Items.LITEXPANSION, result, type, recipe).register(LiteXpansion.getInstance());
+                new SlimefunItem(Items.LITEXPANSION, result, type, recipe).register(plugin);
 
                 // make shapeless
                 for (int i = 0; i < 9; i++) {

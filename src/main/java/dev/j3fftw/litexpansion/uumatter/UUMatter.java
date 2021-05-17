@@ -56,7 +56,10 @@ public final class UUMatter {
 
             final ItemStack[] recipe = new ItemStack[9];
             parseRecipe(config, key, recipe);
-
+            if(recipes.values().stream().anyMatch(r -> Arrays.equals(recipe, r))) {
+                LiteXpansion.getInstance().getLogger().log(Level.WARNING, "Recipe duplicated: "+id);
+                continue;
+            }
             this.recipes.put(output, recipe);
             addUuMatterRecipe(output, recipe);
         }

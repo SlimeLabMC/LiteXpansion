@@ -49,6 +49,8 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
         }
         Enchantment.registerEnchantment(new GlowEnchant(Constants.GLOW_ENCHANT));
 
+        UUMatter.INSTANCE.register();
+
         // Category
         Items.LITEXPANSION.register();
 
@@ -92,8 +94,6 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
 
         // Armor
         new ElectricChestplate().register(this);
-
-        UUMatter.INSTANCE.register();
 
         setupResearches();
         new ThoriumResource().register();

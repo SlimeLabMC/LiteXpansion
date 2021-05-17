@@ -17,7 +17,6 @@ import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -29,8 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems.ADVANCED_CIRCUIT_BOARD;
-import static io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems.REINFORCED_PLATE;
+import static io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems.*;
 
 public class MassFabricator extends SlimefunItem implements InventoryBlock, EnergyNetComponent {
 
@@ -38,25 +36,42 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
         new NamespacedKey(LiteXpansion.getInstance(), "mass_fabricator"), Items.MASS_FABRICATOR_MACHINE
     );
 
-    public static final int ENERGY_CONSUMPTION = 16_666;
-    public static final int CAPACITY = ENERGY_CONSUMPTION * 3;
+    public static final int ENERGY_CONSUMPTION = 16384;
+    public static final int CAPACITY = ENERGY_CONSUMPTION * 4;
 
     private static final int[] INPUT_SLOTS = new int[] {10, 11};
     private static final int OUTPUT_SLOT = 15;
     private static final int PROGRESS_SLOT = 13;
-    private static final int PROGRESS_AMOUNT = 50; // Seconds
+    private static final int PROGRESS_AMOUNT = 30; // Seconds
 
     private static final Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
 
-    private static final CustomItem progressItem = new CustomItem(Items.UU_MATTER.getType(), "&7進度");
+    private static final CustomItem progressItem = new CustomItem(Items.UU_MATTER.getType(), "&7待機中");
 
     public MassFabricator() {
         super(Items.LITEXPANSION, Items.MASS_FABRICATOR_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
             REINFORCED_PLATE, ADVANCED_CIRCUIT_BOARD, REINFORCED_PLATE,
-            ADVANCED_CIRCUIT_BOARD, Items.MACHINE_BLOCK, ADVANCED_CIRCUIT_BOARD,
+            CARBONADO_EDGED_CAPACITOR, Items.MACHINE_BLOCK, CARBONADO_EDGED_CAPACITOR,
             REINFORCED_PLATE, ADVANCED_CIRCUIT_BOARD, REINFORCED_PLATE
         });
         setupInv();
+        registerBlockHandler(getID(), (p, b, stack, reason) -> {
+            BlockMenu inv = BlockStorage.getInventory(b);
+
+            if (inv != null) {
+                inv.dropItems(b.getLocation(), INPUT_SLOTS);
+                inv.dropItems(b.getLocation(), OUTPUT_SLOT);
+            }
+            BlockPosition pos = new BlockPosition(b.getWorld(), b.getX(), b.getY(), b.getZ());
+            if(progress.containsKey(pos)){
+                ItemStack i = Items.SCRAP.clone();
+                i.setAmount(progress.get(pos).get(1));
+                b.getWorld().dropItemNaturally(b.getLocation(), i);
+            }
+            progress.remove(pos);
+
+            return true;
+        });
     }
 
     private void setupInv() {

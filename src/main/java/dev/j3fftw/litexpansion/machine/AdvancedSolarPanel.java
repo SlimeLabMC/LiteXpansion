@@ -5,9 +5,8 @@ import dev.j3fftw.litexpansion.utils.Utils;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetProvider;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
@@ -35,15 +34,15 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
     public static int ADVANCED_DAY_RATE = 80;
     public static int ADVANCED_NIGHT_RATE = 10;
     public static int ADVANCED_OUTPUT = 320;
-    public static int ADVANCED_STORAGE = 320_000;
+    public static int ADVANCED_STORAGE = 262144;
     public static int HYBRID_DAY_RATE = 640;
     public static int HYBRID_NIGHT_RATE = 80;
     public static int HYBRID_OUTPUT = 1200;
-    public static int HYBRID_STORAGE = 1_000_000;
+    public static int HYBRID_STORAGE = 1048576;
     public static int ULTIMATE_DAY_RATE = 5120;
     public static int ULTIMATE_NIGHT_RATE = 640;
     public static int ULTIMATE_OUTPUT = 5120;
-    public static int ULTIMATE_STORAGE = 10_000_000;
+    public static int ULTIMATE_STORAGE = 8388608;
     private final Type type;
 
     public AdvancedSolarPanel(Type type) {
@@ -75,7 +74,7 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
         } else if (l.getWorld().getEnvironment() == World.Environment.THE_END) {
             generationType = "&5終界 &8(夜間)";
         } else if (rate == this.type.dayGenerationRate) {
-            generationType = "&e日間)";
+            generationType = "&e日間";
         } else if (rate == this.type.nightGenerationRate) {
             generationType = "&8夜間";
         }
@@ -83,8 +82,8 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
         if (inv.toInventory() != null && !inv.toInventory().getViewers().isEmpty()) {
             inv.replaceExistingItem(PROGRESS_SLOT,
                     canGenerate ? new CustomItem(Material.GREEN_STAINED_GLASS_PANE, "&a發電中",
-                            "", "&b效率: " + generationType,
-                            " &6" + Utils.powerFormatAndFadeDecimals(Utils.perTickToPerSecond(rate)) + " J/s " +
+                            "", "&b效率: " + generationType
+                            + "&7( &6" + Utils.powerFormatAndFadeDecimals(rate) + " J/s &7)",
                                     "", "&7已儲存: &6" + Utils.powerFormatAndFadeDecimals(stored + rate) + " J"
                     )
                             : new CustomItem(Material.ORANGE_STAINED_GLASS_PANE, "&c待機中",
@@ -93,7 +92,7 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
             );
         }
 
-        return rate;
+        return rate*SlimefunPlugin.getTickerTask().getSPT();
     }
 
     @Override
@@ -106,8 +105,9 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
         if (world.getEnvironment() == World.Environment.THE_END) return this.type.nightGenerationRate;
 
         // Note: You need to get the block above for the light check, the block itself is always 0
-        if (world.isThundering() || world.hasStorm() || world.getTime() >= 13000
-                || b.getLocation().add(0, 1, 0).getBlock().getLightFromSky() != 15
+        long time = world.getTime();
+        if (world.isThundering() || world.hasStorm() || (time >= 12300 && time <= 23850)
+                || b.getLocation().add(0, 1, 0).getBlock().getLightFromSky() < 15
         ) {
             return this.type.nightGenerationRate;
         } else {
@@ -137,28 +137,27 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
     }
 
     @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public enum Type {
 
         ADVANCED(Items.ADVANCED_SOLAR_PANEL, ADVANCED_DAY_RATE, ADVANCED_NIGHT_RATE, ADVANCED_OUTPUT,
                 ADVANCED_STORAGE, new ItemStack[] {
                 Items.REINFORCED_GLASS, Items.REINFORCED_GLASS, Items.REINFORCED_GLASS,
                 Items.ADVANCED_ALLOY, SlimefunItems.SOLAR_GENERATOR_4, Items.ADVANCED_ALLOY,
-                SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.ADVANCED_MACHINE_BLOCK, SlimefunItems.ADVANCED_CIRCUIT_BOARD
+                SlimefunItems.CARBONADO_EDGED_CAPACITOR, Items.ADVANCED_MACHINE_BLOCK, SlimefunItems.ADVANCED_CIRCUIT_BOARD
         }),
 
         HYBRID(Items.HYBRID_SOLAR_PANEL, HYBRID_DAY_RATE, HYBRID_NIGHT_RATE, HYBRID_OUTPUT, HYBRID_STORAGE,
             new ItemStack[] {
-                Items.CARBON_PLATE, new ItemStack(Material.LAPIS_BLOCK), Items.CARBON_PLATE,
-                Items.IRIDIUM_PLATE, Items.ADVANCED_MACHINE_BLOCK, Items.IRIDIUM_PLATE,
-                SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.IRIDIUM_PLATE, SlimefunItems.ADVANCED_CIRCUIT_BOARD
+                Items.CARBON_PLATE, SlimefunItems.SILICON, Items.CARBON_PLATE,
+                Items.ADVANCED_SOLAR_PANEL, Items.ADVANCED_SOLAR_PANEL, Items.ADVANCED_SOLAR_PANEL,
+                Items.IRIDIUM_PLATE, Items.ADVANCED_MACHINE_BLOCK, SlimefunItems.ADVANCED_CIRCUIT_BOARD
             }),
 
         ULTIMATE(Items.ULTIMATE_SOLAR_PANEL, ULTIMATE_DAY_RATE, ULTIMATE_NIGHT_RATE, ULTIMATE_OUTPUT,
                 ULTIMATE_STORAGE, new ItemStack[] {
                 Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL,
-                Items.HYBRID_SOLAR_PANEL, SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.HYBRID_SOLAR_PANEL,
-                Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL, Items.HYBRID_SOLAR_PANEL,
+                Items.ADVANCED_SOLAR_PANEL, SlimefunItems.ADVANCED_CIRCUIT_BOARD, Items.ADVANCED_SOLAR_PANEL,
+                Items.HYBRID_SOLAR_PANEL, SlimefunItems.SOLAR_GENERATOR_4, Items.HYBRID_SOLAR_PANEL,
         });
 
         @Nonnull

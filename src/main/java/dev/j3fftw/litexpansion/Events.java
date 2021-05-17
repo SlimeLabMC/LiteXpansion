@@ -6,10 +6,12 @@ import dev.j3fftw.litexpansion.utils.Constants;
 import dev.j3fftw.litexpansion.weapons.NanoBlade;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.Slimefun;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -34,18 +36,21 @@ public class Events implements Listener {
             Player p = (Player) e.getDamager();
             ItemStack itemInHand = p.getInventory().getItemInMainHand();
             final NanoBlade nanoBlade = (NanoBlade) SlimefunItem.getByID(Items.NANO_BLADE.getItemId());
-            if (nanoBlade.isItem(itemInHand)
-                && itemInHand.containsEnchantment(Enchantment.getByKey(Constants.GLOW_ENCHANT))
-                && nanoBlade.removeItemCharge(itemInHand, 10) && Slimefun.hasUnlocked(p, nanoBlade, true)
-            ) {
-                e.setDamage(e.getDamage() * 3);
+            if (nanoBlade.isItem(itemInHand)) {
+                int deal = 7;
+                if(itemInHand.getType() == Material.NETHERITE_SWORD) deal++;
+                if (itemInHand.containsEnchantment(Enchantment.getByKey(Constants.GLOW_ENCHANT))
+                        && nanoBlade.removeItemCharge(itemInHand, 10) && Slimefun.hasUnlocked(p, nanoBlade, true)){
+                    deal *= 3;
+                }
+                e.setDamage(e.getDamage() * deal);
             }
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && ((Player) e.getEntity()).getEquipment() != null) {
+        if (e.getEntity() instanceof Player && ((Player) e.getEntity()).getEquipment() != null && !e.isCancelled()) {
             Player p = (Player) e.getEntity();
             Optional<ItemStack> optional = Optional.ofNullable(p.getEquipment().getChestplate());
             if(optional.isPresent()){
@@ -54,7 +59,7 @@ public class Events implements Listener {
                         && Slimefun.hasUnlocked(p, electricChestplate, true)
                 ) {
                     float deal = Math.min(electricChestplate.getItemCharge(optional.get()) * 1.75F, (float) e.getDamage());
-                    electricChestplate.removeItemCharge(optional.get(), deal / 1.75F);
+                    if(deal > 0) electricChestplate.removeItemCharge(optional.get(), deal / 1.75F);
                     if(deal >= e.getDamage()){
                         e.setCancelled(true);
                     }else {
