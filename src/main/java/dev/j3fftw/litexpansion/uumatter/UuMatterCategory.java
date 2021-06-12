@@ -2,55 +2,45 @@ package dev.j3fftw.litexpansion.uumatter;
 
 import dev.j3fftw.litexpansion.Items;
 import dev.j3fftw.litexpansion.LiteXpansion;
-import dev.j3fftw.litexpansion.machine.UUCraftingChamber;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideLayout;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
+import me.mrCookieSlime.Slimefun.cscorelib2.skull.SkullItem;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import javax.annotation.Nonnull;
-
 public final class UuMatterCategory extends FlexCategory {
 
     public static final UuMatterCategory INSTANCE = new UuMatterCategory();
 
     private final int[] recipeSlots = new int[] {12, 13, 14, 21, 22, 23, 30, 31, 32};
-    private ChestMenu menu;
 
     private UuMatterCategory() {
         super(new NamespacedKey(LiteXpansion.getInstance(), "uumatter_category"),
-            new CustomItem(Items.UU_MATTER, "&5通用物質 合成表")
+                new CustomItem(SkullItem.fromHash("54d39df0f813b7424406462854eb7249f8c76d80ce56f3af410e35a287062589"),
+                        "&5通用物質 合成表")
         );
-
-        setupInv();
     }
 
-    private void setupInv() {
-        menu = new ChestMenu("&5通用物質 合成表");
-
-        // Header
-        for (int i = 0; i < 9; ++i) {
-            menu.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
-        }
-    }
-
-    private ChestMenu create(Player p) {
+    private ChestMenu create(@Nonnull Player p) {
         final ChestMenu playerMenu = new ChestMenu(SlimefunPlugin.getLocalization().getMessage(p, "guide.title.main"));
         playerMenu.setEmptySlotsClickable(false);
         return playerMenu;
     }
 
-    private void displayItem(PlayerProfile profile, ItemStack result) {
+    @ParametersAreNonnullByDefault
+    private void displayItem(PlayerProfile profile, ItemStack result, SlimefunGuideLayout mode) {
         final Player p = profile.getPlayer();
         if (p != null) {
             final ChestMenu menu = this.create(p);
@@ -59,18 +49,21 @@ public final class UuMatterCategory extends FlexCategory {
             for (int i = 0; i < 9; i++) {
                 if (i == 1) {
                     menu.addItem(i, new CustomItem(ChestMenuUtils.getBackButton(p, "",
-                        ChatColor.GRAY + SlimefunPlugin.getLocalization().getMessage(p, "guide.back.guide")))
+                            ChatColor.GRAY + SlimefunPlugin.getLocalization().getMessage(p, "guide.back.guide")))
                     );
                     menu.addMenuClickHandler(i, (pl, s, is, action) -> {
-                        open(p, profile, SlimefunGuideLayout.CHEST);
+                        open(p, profile, mode);
                         return false;
                     });
-                } else
+                } else {
                     menu.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
+                }
             }
 
             ItemStack[] recipe = UUMatter.INSTANCE.getRecipes().get(result);
-            if (recipe == null) return;
+            if (recipe == null) {
+                return;
+            }
 
             this.displayItem(menu, p, profile, result, recipe);
 
@@ -83,16 +76,17 @@ public final class UuMatterCategory extends FlexCategory {
         }
     }
 
+    @ParametersAreNonnullByDefault
     private void displayItem(ChestMenu menu, Player p, PlayerProfile profile, ItemStack output, ItemStack[] recipe) {
         final ChestMenu.MenuClickHandler clickHandler = (pl, s, clickedItem, a) -> onIngredientClick(profile,
-            clickedItem);
+                clickedItem);
 
         for (int i = 0; i < 9; ++i) {
             menu.addItem(recipeSlots[i], recipe[i], clickHandler);
         }
 
         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1, 1);
-        menu.addItem(19, UUCraftingChamber.Recipetype, ChestMenuUtils.getEmptyClickHandler());
+        menu.addItem(19, RecipeType.ENHANCED_CRAFTING_TABLE.getItem(p), ChestMenuUtils.getEmptyClickHandler());
         menu.addItem(25, output, ChestMenuUtils.getEmptyClickHandler());
     }
 
@@ -114,20 +108,28 @@ public final class UuMatterCategory extends FlexCategory {
 
     @Override
     public void open(Player player, PlayerProfile playerProfile, SlimefunGuideLayout slimefunGuideLayout) {
-        menu.addItem(1, new CustomItem(ChestMenuUtils.getBackButton(player, "",
-            ChatColor.GRAY + SlimefunPlugin.getLocalization().getMessage(player, "guide.back.guide")))
-        );
+        ChestMenu menu = new ChestMenu("&5通用物質 合成表");
 
-        menu.addMenuClickHandler(1, (pl, slot, item, action) -> {
-            SlimefunPlugin.getRegistry().getGuideLayout(slimefunGuideLayout).openMainMenu(playerProfile, 1);
-            return false;
-        });
+        // Header
+        for (int i = 0; i < 9; ++i) {
+            menu.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
+        }
+
+        menu.setEmptySlotsClickable(false);
+
+        menu.addItem(1, new CustomItem(ChestMenuUtils.getBackButton(player, "",
+                ChatColor.GRAY + SlimefunPlugin.getLocalization().getMessage(player, "guide.back.guide"))),
+                (pl, slot, item, action) -> {
+                    SlimefunGuide.openMainMenu(playerProfile, slimefunGuideLayout, 1);
+                    return false;
+                }
+        );
 
         // Other items
         int i = 9;
         for (ItemStack item : UUMatter.INSTANCE.getRecipes().keySet()) {
             menu.addItem(i++, item, (v0, v1, v2, v3) -> {
-                displayItem(playerProfile, item);
+                displayItem(playerProfile, item, slimefunGuideLayout);
                 return false;
             });
         }

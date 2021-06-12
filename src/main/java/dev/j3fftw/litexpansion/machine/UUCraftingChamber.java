@@ -6,9 +6,9 @@ import dev.j3fftw.litexpansion.Items;
 import dev.j3fftw.litexpansion.uumatter.UUMatter;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import me.mrCookieSlime.CSCoreLibPlugin.cscorelib2.chat.ChatColors;
 import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -54,7 +54,7 @@ public class UUCraftingChamber extends SlimefunItem implements InventoryBlock, E
         });
 
         Recipetype.setLore(Arrays.asList("",
-                ChatColors.color("&f將 &5通用物質 &f按照合成表加工為普通物質")));
+                ChatColor.translateAlternateColorCodes('&', "&f將 &5通用物質 &f按照合成表加工為普通物質")));
 
         new BlockMenuPreset(getId(), "&5通用物質合成機") {
 
