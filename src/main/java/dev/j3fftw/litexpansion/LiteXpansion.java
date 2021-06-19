@@ -1,11 +1,17 @@
 package dev.j3fftw.litexpansion;
 
 import dev.j3fftw.litexpansion.armor.ElectricChestplate;
+import dev.j3fftw.litexpansion.machine.MassFabricator;
+import dev.j3fftw.litexpansion.machine.RubberSynthesizer;
+import dev.j3fftw.litexpansion.machine.ScrapMachine;
 import dev.j3fftw.litexpansion.resources.ThoriumResource;
 import dev.j3fftw.litexpansion.utils.Constants;
 import dev.j3fftw.litexpansion.uumatter.UUMatter;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Iterator;
 
 public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
 
@@ -91,6 +98,38 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
 
     @Override
     public void onDisable() {
+
+        Iterator<BlockPosition> poses = ScrapMachine.progress.keySet().iterator();
+        while (poses.hasNext()) {
+            BlockPosition pos = poses.next();
+            BlockMenu inv = BlockStorage.getInventory(pos.getBlock());
+            inv.pushItem(Items.SCRAP.clone(), ScrapMachine.OUTPUT_SLOT);
+            inv.replaceExistingItem(ScrapMachine.PROGRESS_SLOT, ScrapMachine.progressItem);
+            poses.remove();
+        }
+
+        poses = MassFabricator.progress.keySet().iterator();
+        while (poses.hasNext()) {
+            BlockPosition pos = poses.next();
+            BlockMenu inv = BlockStorage.getInventory(pos.getBlock());
+            inv.pushItem(Items.UU_MATTER.clone(), MassFabricator.OUTPUT_SLOT);
+            inv.replaceExistingItem(MassFabricator.PROGRESS_SLOT, MassFabricator.progressItem);
+            poses.remove();
+        }
+
+        poses = RubberSynthesizer.progress.keySet().iterator();
+        while (poses.hasNext()) {
+            BlockPosition pos = poses.next();
+            BlockMenu inv = BlockStorage.getInventory(pos.getBlock());
+            inv.pushItem(Items.RUBBER.clone(), RubberSynthesizer.OUTPUT_SLOT);
+            inv.replaceExistingItem(RubberSynthesizer.PROGRESS_SLOT, RubberSynthesizer.progressItem);
+            poses.remove();
+        }
+
+        ScrapMachine.progress = null;
+        MassFabricator.progress = null;
+        RubberSynthesizer.progress = null;
+
         instance = null;
     }
 

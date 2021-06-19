@@ -40,13 +40,13 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
     public static final int CAPACITY = 450;
 
     private static final int INPUT_SLOT = 11;
-    private static final int OUTPUT_SLOT = 15;
-    private static final int PROGRESS_SLOT = 13;
+    public static final int OUTPUT_SLOT = 15;
+    public static final int PROGRESS_SLOT = 13;
     private static final int PROGRESS_AMOUNT = 5; // Seconds
 
-    private static final Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
+    public static Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
 
-    private static final CustomItem progressItem = new CustomItem(Material.DEAD_BUSH, "&7待機中");
+    public static final CustomItem progressItem = new CustomItem(Material.DEAD_BUSH, "&7待機中");
 
     public ScrapMachine() {
         super(Items.LITEXPANSION, Items.SCRAP_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -55,14 +55,14 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
             SlimefunItems.ADVANCED_CIRCUIT_BOARD, SlimefunItems.REINFORCED_PLATE, SlimefunItems.ADVANCED_CIRCUIT_BOARD
         });
         setupInv();
-        registerBlockHandler(getID(), (p, b, stack, reason) -> {
+        registerBlockHandler(getId(), (p, b, stack, reason) -> {
             BlockMenu inv = BlockStorage.getInventory(b);
 
             if (inv != null) {
                 inv.dropItems(b.getLocation(), INPUT_SLOT);
                 inv.dropItems(b.getLocation(), OUTPUT_SLOT);
             }
-            progress.remove(new BlockPosition(b.getWorld(), b.getX(), b.getY(), b.getZ()));
+            progress.remove(new BlockPosition(b));
 
             return true;
         });
@@ -70,10 +70,11 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
     private void setupInv() {
         createPreset(this, "&8物質回收裝置", blockMenuPreset -> {
-            for (int i = 0; i < 27; i++)
+            for (int i = 0; i < 27; i++) {
+                if (i == INPUT_SLOT || i == OUTPUT_SLOT) continue;
                 blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
+            }
 
-            blockMenuPreset.addItem(INPUT_SLOT, null, (player, i, itemStack, clickAction) -> true);
             Utils.putOutputSlot(blockMenuPreset, OUTPUT_SLOT);
 
             blockMenuPreset.addItem(PROGRESS_SLOT, new CustomItem(Material.DEAD_BUSH, "&7進度"));

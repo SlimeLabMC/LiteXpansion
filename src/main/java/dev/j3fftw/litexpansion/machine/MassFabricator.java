@@ -40,13 +40,13 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
     public static final int CAPACITY = ENERGY_CONSUMPTION * 4;
 
     private static final int[] INPUT_SLOTS = new int[] {10, 11};
-    private static final int OUTPUT_SLOT = 15;
-    private static final int PROGRESS_SLOT = 13;
+    public static final int OUTPUT_SLOT = 15;
+    public static final int PROGRESS_SLOT = 13;
     private static final int PROGRESS_AMOUNT = 30; // Seconds
 
-    private static final Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
+    public static Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
 
-    private static final CustomItem progressItem = new CustomItem(Items.UU_MATTER.getType(), "&7待機中");
+    public static final CustomItem progressItem = new CustomItem(Items.UU_MATTER.getType(), "&7待機中");
 
     public MassFabricator() {
         super(Items.LITEXPANSION, Items.MASS_FABRICATOR_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -55,7 +55,7 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
             REINFORCED_PLATE, ADVANCED_CIRCUIT_BOARD, REINFORCED_PLATE
         });
         setupInv();
-        registerBlockHandler(getID(), (p, b, stack, reason) -> {
+        registerBlockHandler(getId(), (p, b, stack, reason) -> {
             BlockMenu inv = BlockStorage.getInventory(b);
 
             if (inv != null) {
@@ -76,12 +76,10 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
 
     private void setupInv() {
         createPreset(this, "&5物質產生器", blockMenuPreset -> {
-            for (int i = 0; i < 27; i++)
+            for (int i = 0; i < 27; i++){
+                if (i == INPUT_SLOTS[0] || i == INPUT_SLOTS[1] || i == OUTPUT_SLOT) continue;
                 blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
-
-            for (int slot : INPUT_SLOTS)
-                blockMenuPreset.addItem(slot, null, (player, i, itemStack, clickAction) -> true);
-
+            }
             Utils.putOutputSlot(blockMenuPreset, OUTPUT_SLOT);
 
             blockMenuPreset.addItem(PROGRESS_SLOT, progressItem);
@@ -145,20 +143,19 @@ public class MassFabricator extends SlimefunItem implements InventoryBlock, Ener
                     inv.consumeItem(INPUT_SLOTS[0], minus);
                     producenow -= minus;
                 }
-                if(i2 && producenow > 0){
+                if(i2 && producenow > 0) {
                     inv.consumeItem(INPUT_SLOTS[1], producenow);
                 }
             } else {
                 inv.pushItem(Items.UU_MATTER.clone(), OUTPUT_SLOT);
                 progress.remove(pos);
-                inv.replaceExistingItem(22, progressItem);
+                inv.replaceExistingItem(PROGRESS_SLOT, progressItem);
             }
         } else {
             if(i1) inv.consumeItem(INPUT_SLOTS[0]);
             else inv.consumeItem(INPUT_SLOTS[1]);
             progress.put(pos, new ArrayList<>(Arrays.asList(SlimefunPlugin.getTickerTask().getTickstamp() + PROGRESS_AMOUNT, 0)));
         }
-
     }
 
     @Nonnull

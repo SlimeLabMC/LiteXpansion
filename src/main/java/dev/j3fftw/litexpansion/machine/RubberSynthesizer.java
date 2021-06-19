@@ -37,14 +37,14 @@ public class RubberSynthesizer extends SlimefunItem implements InventoryBlock, E
     );
 
     private static final int INPUT_SLOT = 11;
-    private static final int OUTPUT_SLOT = 15;
-    private static final int PROGRESS_SLOT = 13;
+    public static final int OUTPUT_SLOT = 15;
+    public static final int PROGRESS_SLOT = 13;
     private static final int PROGRESS_AMOUNT = 13;
     public static final int ENERGY_CONSUMPTION = 1024;
     public static final int CAPACITY = 8192;
-    private static final Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
+    public static Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
 
-    private static final CustomItem progressItem = new CustomItem(Material.FIRE_CHARGE, "&7待機中");
+    public static final CustomItem progressItem = new CustomItem(Material.FIRE_CHARGE, "&7待機中");
 
     public RubberSynthesizer() {
         super(Items.LITEXPANSION, Items.RUBBER_SYNTHESIZER_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE,
@@ -54,7 +54,7 @@ public class RubberSynthesizer extends SlimefunItem implements InventoryBlock, E
                 SlimefunItems.REINFORCED_PLATE, new ItemStack(Material.FLINT_AND_STEEL), SlimefunItems.REINFORCED_PLATE
             });
         setupInv();
-        registerBlockHandler(getID(), (p, b, stack, reason) -> {
+        registerBlockHandler(getId(), (p, b, stack, reason) -> {
             BlockMenu inv = BlockStorage.getInventory(b);
 
             if (inv != null) {
@@ -73,8 +73,10 @@ public class RubberSynthesizer extends SlimefunItem implements InventoryBlock, E
 
     private void setupInv() {
         createPreset(this, "&6橡膠合成機", blockMenuPreset -> {
-            for (int i = 0; i < 27; i++)
+            for (int i = 0; i < 27; i++) {
+                if (i == INPUT_SLOT || i == OUTPUT_SLOT) continue;
                 blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
+            }
 
             blockMenuPreset.addItem(INPUT_SLOT, null, (player, i, itemStack, clickAction) -> true);
             Utils.putOutputSlot(blockMenuPreset, OUTPUT_SLOT);
