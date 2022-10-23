@@ -8,6 +8,8 @@ import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponen
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
@@ -16,8 +18,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -46,7 +46,7 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
     public static Map<BlockPosition, ArrayList<Integer>> progress = new HashMap<>();
 
-    public static final CustomItem progressItem = new CustomItem(Material.DEAD_BUSH, "&7待機中");
+    public static final CustomItemStack progressItem = new CustomItemStack(Material.DEAD_BUSH, "&7待機中");
 
     public ScrapMachine() {
         super(Items.LITEXPANSION, Items.SCRAP_MACHINE, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -77,7 +77,7 @@ public class ScrapMachine extends SlimefunItem implements InventoryBlock, Energy
 
             Utils.putOutputSlot(blockMenuPreset, OUTPUT_SLOT);
 
-            blockMenuPreset.addItem(PROGRESS_SLOT, new CustomItem(Material.DEAD_BUSH, "&7進度"));
+            blockMenuPreset.addItem(PROGRESS_SLOT, new CustomItemStack(Material.DEAD_BUSH, "&7進度"));
         });
     }
 

@@ -9,9 +9,9 @@ import dev.j3fftw.litexpansion.utils.Constants;
 import dev.j3fftw.litexpansion.uumatter.UUMatter;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.researching.Research;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.blocks.BlockPosition;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.blocks.BlockPosition;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,7 +49,7 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
         UUMatter.INSTANCE.register();
 
         // Category
-        Items.LITEXPANSION.register();
+        Items.LITEXPANSION.register(this);
 
         ItemSetup.INSTANCE.init();
 
@@ -103,6 +103,7 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
         while (poses.hasNext()) {
             BlockPosition pos = poses.next();
             BlockMenu inv = BlockStorage.getInventory(pos.getBlock());
+            if(inv == null) continue;
             inv.pushItem(Items.SCRAP.clone(), ScrapMachine.OUTPUT_SLOT);
             inv.replaceExistingItem(ScrapMachine.PROGRESS_SLOT, ScrapMachine.progressItem);
             poses.remove();
@@ -112,6 +113,7 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
         while (poses.hasNext()) {
             BlockPosition pos = poses.next();
             BlockMenu inv = BlockStorage.getInventory(pos.getBlock());
+            if(inv == null) continue;
             inv.pushItem(Items.UU_MATTER.clone(), MassFabricator.OUTPUT_SLOT);
             inv.replaceExistingItem(MassFabricator.PROGRESS_SLOT, MassFabricator.progressItem);
             poses.remove();
@@ -121,6 +123,7 @@ public class LiteXpansion extends JavaPlugin implements SlimefunAddon {
         while (poses.hasNext()) {
             BlockPosition pos = poses.next();
             BlockMenu inv = BlockStorage.getInventory(pos.getBlock());
+            if(inv == null) continue;
             inv.pushItem(Items.RUBBER.clone(), RubberSynthesizer.OUTPUT_SLOT);
             inv.replaceExistingItem(RubberSynthesizer.PROGRESS_SLOT, RubberSynthesizer.progressItem);
             poses.remove();

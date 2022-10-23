@@ -6,6 +6,7 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetProvider;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
@@ -15,7 +16,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.interfaces.InventoryBlock;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, EnergyNetProvider {
 
     private static final int PROGRESS_SLOT = 4;
-    private static final CustomItem generatingItem = new CustomItem(Material.ORANGE_STAINED_GLASS_PANE,
+    private static final CustomItemStack generatingItem = new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE,
             "&c未在生產狀態"
     );
     public static int ADVANCED_DAY_RATE = 80;
@@ -49,7 +49,7 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
         super(Items.LITEXPANSION, type.item, RecipeType.ENHANCED_CRAFTING_TABLE, type.recipe);
         this.type = type;
 
-        createPreset(this, type.item.getImmutableMeta().getDisplayName().orElse("&7"),
+        createPreset(this, type.item.getItemMetaSnapshot().getDisplayName().orElse("&7"),
                 blockMenuPreset -> {
                     for (int i = 0; i < 9; i++)
                         blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
@@ -81,12 +81,12 @@ public class AdvancedSolarPanel extends SlimefunItem implements InventoryBlock, 
 
         if (inv.toInventory() != null && !inv.toInventory().getViewers().isEmpty()) {
             inv.replaceExistingItem(PROGRESS_SLOT,
-                    canGenerate ? new CustomItem(Material.GREEN_STAINED_GLASS_PANE, "&a發電中",
+                    canGenerate ? new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a發電中",
                             "", "&b效率: " + generationType
                             + "&7( &6" + Utils.powerFormatAndFadeDecimals(rate) + " J/s &7)",
                                     "", "&7已儲存: &6" + Utils.powerFormatAndFadeDecimals(stored + rate) + " J"
                     )
-                            : new CustomItem(Material.ORANGE_STAINED_GLASS_PANE, "&c待機中",
+                            : new CustomItemStack(Material.ORANGE_STAINED_GLASS_PANE, "&c待機中",
                             "", "&7已達到最大儲存量",
                             "", "&7已儲存: &6" + Utils.powerFormatAndFadeDecimals(stored) + " J")
             );

@@ -6,10 +6,10 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -61,7 +61,7 @@ public class GlassCutter extends SimpleSlimefunItem<ItemUseHandler> implements L
                 || blockType.name().endsWith("_GLASS")
                 || blockType.name().endsWith("_GLASS_PANE")
             ) && isItem(e.getItem())
-            && SlimefunPlugin.getProtectionManager().hasPermission(e.getPlayer(), blockLocation, ProtectableAction.BREAK_BLOCK) 
+            && SlimefunPlugin.getProtectionManager().hasPermission(e.getPlayer(), blockLocation, Interaction.BREAK_BLOCK)
         ) {
             e.setCancelled(true);
 

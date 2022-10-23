@@ -2,6 +2,7 @@ package dev.j3fftw.litexpansion;
 
 import dev.j3fftw.litexpansion.armor.ElectricChestplate;
 import dev.j3fftw.litexpansion.items.FoodSynthesizer;
+import dev.j3fftw.litexpansion.items.GlassCutter;
 import dev.j3fftw.litexpansion.utils.Constants;
 import dev.j3fftw.litexpansion.weapons.NanoBlade;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
@@ -32,7 +33,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onPlayerDamageDeal(EntityDamageByEntityEvent e) {
-        if (e.getDamager() instanceof Player) {
+        if (e.getDamager() instanceof Player && (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK || e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
             Player p = (Player) e.getDamager();
             ItemStack itemInHand = p.getInventory().getItemInMainHand();
             final NanoBlade nanoBlade = (NanoBlade) SlimefunItem.getByID(Items.NANO_BLADE.getItemId());
@@ -48,10 +49,14 @@ public class Events implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && ((Player) e.getEntity()).getEquipment() != null && !e.isCancelled()) {
-            Player p = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player p && p.getEquipment() != null) {
+            EntityDamageEvent.DamageCause cause = e.getCause();
+            if(cause == EntityDamageEvent.DamageCause.DROWNING || cause == EntityDamageEvent.DamageCause.MAGIC ||
+                    cause == EntityDamageEvent.DamageCause.POISON || cause == EntityDamageEvent.DamageCause.STARVATION ||
+                    cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.VOID ||
+                    cause == EntityDamageEvent.DamageCause.WITHER) return;
             Optional<ItemStack> optional = Optional.ofNullable(p.getEquipment().getChestplate());
             if(optional.isPresent()){
                 final ElectricChestplate electricChestplate = (ElectricChestplate) Items.ELECTRIC_CHESTPLATE.getItem();
@@ -74,9 +79,9 @@ public class Events implements Listener {
 
     @EventHandler
     public void onHungerDamage(EntityDamageEvent e) {
-        if (e.getCause() == EntityDamageEvent.DamageCause.STARVATION && e.getEntity() instanceof Player &&
+        if (e.getCause() == EntityDamageEvent.DamageCause.STARVATION && e.getEntity() instanceof Player player &&
                 Items.FOOD_SYNTHESIZER != null && !Items.FOOD_SYNTHESIZER.getItem().isDisabled()) {
-            checkAndConsume((Player) e.getEntity(), null);
+            checkAndConsume(player, null);
         }
     }
 
@@ -85,7 +90,6 @@ public class Events implements Listener {
         for (ItemStack item : p.getInventory().getContents()) {
             if (foodSynth.isItem(item) && foodSynth.removeItemCharge(item, 3F) && Slimefun.hasUnlocked(p, foodSynth, true)) {
                 p.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EAT, 1.5F, 1F);
-                e.setFoodLevel(20);
                 p.setSaturation(5);
                 if (e != null) {
                     e.setFoodLevel(20);

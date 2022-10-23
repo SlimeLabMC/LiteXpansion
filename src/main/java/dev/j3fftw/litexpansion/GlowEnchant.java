@@ -65,7 +65,7 @@ public class GlowEnchant extends Enchantment {
     public boolean canEnchantItem(ItemStack item) {
         if (item.hasItemMeta()) {
             final ItemMeta itemMeta = item.getItemMeta();
-            final Optional<String> id = SlimefunPlugin.getItemDataService().getItemData(itemMeta);
+            final Optional<String> id = SlimefunPlugin.getCustomItemDataService().getItemData(itemMeta);
             if (id.isPresent()) {
                 return (id.get().equals(Items.ADVANCED_CIRCUIT.getItemId()))
                     || (id.get().equals(Items.NANO_BLADE.getItemId()))
@@ -105,4 +105,8 @@ public class GlowEnchant extends Enchantment {
         return null;
     }
 
+    @Override
+    public @NotNull String translationKey() {
+        return null;
+    }
 }

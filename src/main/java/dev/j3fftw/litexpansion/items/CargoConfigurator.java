@@ -6,11 +6,11 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import me.mrCookieSlime.Slimefun.cscorelib2.data.PersistentDataAPI;
-import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -61,7 +61,7 @@ public class CargoConfigurator extends SimpleSlimefunItem<ItemUseHandler> implem
 
         final ItemMeta meta = clickedItem.getItemMeta();
 
-        final List<String> defaultLore = Items.CARGO_CONFIGURATOR.getImmutableMeta().getLore()
+        final List<String> defaultLore = Items.CARGO_CONFIGURATOR.getItemMetaSnapshot().getLore()
             .orElse(new ArrayList<>());
         final List<String> lore = meta.hasLore() ? meta.getLore() : defaultLore;
 
@@ -79,7 +79,7 @@ public class CargoConfigurator extends SimpleSlimefunItem<ItemUseHandler> implem
 
         final SlimefunItem block = BlockStorage.check(e.getClickedBlock());
         if (block == null) return;
-        if (!SlimefunPlugin.getProtectionManager().hasPermission(e.getPlayer(), e.getClickedBlock(), ProtectableAction.INTERACT_BLOCK)) return;
+        if (!SlimefunPlugin.getProtectionManager().hasPermission(e.getPlayer(), e.getClickedBlock(), Interaction.INTERACT_BLOCK)) return;
 
         final ItemStack clickedItemStack = block.getItem();
 

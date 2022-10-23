@@ -5,11 +5,12 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
 import dev.j3fftw.litexpansion.utils.Constants;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import me.mrCookieSlime.Slimefun.Objects.Category;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import me.mrCookieSlime.Slimefun.cscorelib2.skull.SkullItem;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -20,7 +21,7 @@ public final class Items {
     // Category
     public static final Category LITEXPANSION = new Category(
         new NamespacedKey(LiteXpansion.getInstance(), "litexpansion"),
-        new CustomItem(SkullItem.fromHash("3f87fc5cbb233743a82fb0fa51fe739487f29bcc01c9026621ecefad197f4fb1"),
+        new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("3f87fc5cbb233743a82fb0fa51fe739487f29bcc01c9026621ecefad197f4fb1")),
             "&7物理科技")
     );
     public static final SlimefunItemStack ELECTRIC_CHESTPLATE = new SlimefunItemStack(
@@ -79,7 +80,7 @@ public final class Items {
     // Machines
     public static final SlimefunItemStack SCRAP_MACHINE = new SlimefunItemStack(
         "SCRAP_MACHINE",
-            new CustomItem(SkullItem.fromHash("6872d0710cce9e11f6b4393d8215788ad8f99e5dc1378606f775fd064287d7dc"),
+            new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("6872d0710cce9e11f6b4393d8215788ad8f99e5dc1378606f775fd064287d7dc")),
                     "物質回收裝置"),
         "&8物質回收裝置",
         "",
@@ -92,7 +93,7 @@ public final class Items {
 
     public static final SlimefunItemStack MASS_FABRICATOR_MACHINE = new SlimefunItemStack(
         "MASS_FABRICATOR_MACHINE",
-            new CustomItem(SkullItem.fromHash("215cd248e3fb7b038013a1d1487168df093a7bbedce4224b5c823d3ef681a784"),
+            new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("215cd248e3fb7b038013a1d1487168df093a7bbedce4224b5c823d3ef681a784")),
                     "物質產生器"),
         "&5物質產生器",
             "",
@@ -104,7 +105,7 @@ public final class Items {
     );
     public static final SlimefunItemStack UU_CRAFTING_CHAMBER = new SlimefunItemStack(
             "UU_CRAFTING_CHAMBER",
-            new CustomItem(SkullItem.fromHash("5b78e55e3ea6b3682bd7cead43eb1c91b2527a81aa2894f095801f6ee47a3"),
+            new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("5b78e55e3ea6b3682bd7cead43eb1c91b2527a81aa2894f095801f6ee47a3")),
                     "通用物質合成機"),
             "&6通用物質合成機",
             "",
@@ -118,7 +119,7 @@ public final class Items {
     // Items
     public static final SlimefunItemStack FOOD_SYNTHESIZER = new SlimefunItemStack(
         "FOOD_SYNTHESIZER",
-        new CustomItem(SkullItem.fromHash("a11a2df7d37af40ed5ce442fd2d78cd8ebcdcdc029d2ae691a2b64395cdf"),
+        new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("a11a2df7d37af40ed5ce442fd2d78cd8ebcdcdc029d2ae691a2b64395cdf")),
             "食品合成器"),
         "&d食品合成器",
         "",
@@ -136,7 +137,7 @@ public final class Items {
     );
     public static final SlimefunItemStack THORIUM = new SlimefunItemStack(
         "THORIUM",
-        new CustomItem(SkullItem.fromHash("427d1a6184c62d4c4a67f862b8e19ec001abe4c7d889f23349e8dafe6d033"),
+        new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode("427d1a6184c62d4c4a67f862b8e19ec001abe4c7d889f23349e8dafe6d033")),
             "釷"),
         "&8釷",
         "",

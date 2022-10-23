@@ -5,15 +5,15 @@ import dev.j3fftw.litexpansion.LiteXpansion;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.categories.FlexCategory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideLayout;
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import me.mrCookieSlime.Slimefun.cscorelib2.skull.SkullItem;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -28,8 +28,8 @@ public final class UuMatterCategory extends FlexCategory {
 
     private UuMatterCategory() {
         super(new NamespacedKey(LiteXpansion.getInstance(), "uumatter_category"),
-                new CustomItem(SkullItem.fromHash("54d39df0f813b7424406462854eb7249f8c76d80ce56f3af410e35a287062589"),
-                        "&5通用物質 合成表")
+                new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode(
+                        "54d39df0f813b7424406462854eb7249f8c76d80ce56f3af410e35a287062589")), "&5通用物質 合成表")
         );
     }
 
@@ -40,7 +40,7 @@ public final class UuMatterCategory extends FlexCategory {
     }
 
     @ParametersAreNonnullByDefault
-    private void displayItem(PlayerProfile profile, ItemStack result, SlimefunGuideLayout mode) {
+    private void displayItem(PlayerProfile profile, ItemStack result, SlimefunGuideMode mode) {
         final Player p = profile.getPlayer();
         if (p != null) {
             final ChestMenu menu = this.create(p);
@@ -48,7 +48,7 @@ public final class UuMatterCategory extends FlexCategory {
             // Header and back button
             for (int i = 0; i < 9; i++) {
                 if (i == 1) {
-                    menu.addItem(i, new CustomItem(ChestMenuUtils.getBackButton(p, "",
+                    menu.addItem(i, new CustomItemStack(ChestMenuUtils.getBackButton(p, "",
                             ChatColor.GRAY + SlimefunPlugin.getLocalization().getMessage(p, "guide.back.guide")))
                     );
                     menu.addMenuClickHandler(i, (pl, s, is, action) -> {
@@ -86,7 +86,7 @@ public final class UuMatterCategory extends FlexCategory {
         }
 
         p.playSound(p.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1, 1);
-        menu.addItem(19, RecipeType.ENHANCED_CRAFTING_TABLE.getItem(p), ChestMenuUtils.getEmptyClickHandler());
+        menu.addItem(19, Items.UU_CRAFTING_CHAMBER, ChestMenuUtils.getEmptyClickHandler());
         menu.addItem(25, output, ChestMenuUtils.getEmptyClickHandler());
     }
 
@@ -101,13 +101,13 @@ public final class UuMatterCategory extends FlexCategory {
 
     @Override
     public boolean isVisible(@Nonnull Player player, @Nonnull PlayerProfile playerProfile,
-                             @Nonnull SlimefunGuideLayout slimefunGuideLayout) {
+                             @Nonnull SlimefunGuideMode slimefunGuideLayout) {
         // This implementation makes little sense in a Cheat Sheet context
-        return slimefunGuideLayout != SlimefunGuideLayout.CHEAT_SHEET;
+        return slimefunGuideLayout != SlimefunGuideMode.CHEAT_MODE;
     }
 
     @Override
-    public void open(Player player, PlayerProfile playerProfile, SlimefunGuideLayout slimefunGuideLayout) {
+    public void open(Player player, PlayerProfile playerProfile, SlimefunGuideMode slimefunGuideLayout) {
         ChestMenu menu = new ChestMenu("&5通用物質 合成表");
 
         // Header
@@ -117,8 +117,8 @@ public final class UuMatterCategory extends FlexCategory {
 
         menu.setEmptySlotsClickable(false);
 
-        menu.addItem(1, new CustomItem(ChestMenuUtils.getBackButton(player, "",
-                ChatColor.GRAY + SlimefunPlugin.getLocalization().getMessage(player, "guide.back.guide"))),
+        menu.addItem(1, new CustomItemStack(ChestMenuUtils.getBackButton(player, "",
+                        ChatColor.GRAY + SlimefunPlugin.getLocalization().getMessage(player, "guide.back.guide"))),
                 (pl, slot, item, action) -> {
                     SlimefunGuide.openMainMenu(playerProfile, slimefunGuideLayout, 1);
                     return false;

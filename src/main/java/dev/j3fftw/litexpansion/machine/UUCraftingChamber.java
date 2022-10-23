@@ -5,9 +5,9 @@ import java.util.*;
 import dev.j3fftw.litexpansion.Items;
 import dev.j3fftw.litexpansion.uumatter.UUMatter;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
-import me.mrCookieSlime.Slimefun.cscorelib2.protection.ProtectableAction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -49,7 +49,7 @@ public class UUCraftingChamber extends SlimefunItem implements InventoryBlock, E
     public UUCraftingChamber() {
         super(Items.LITEXPANSION, Items.UU_CRAFTING_CHAMBER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
                 Items.IRIDIUM_PLATE, SlimefunItems.REINFORCED_PLATE, Items.IRIDIUM_PLATE,
-                SlimefunItems.LARGE_CAPACITOR, SlimefunItems.AUTOMATED_CRAFTING_CHAMBER, SlimefunItems.LARGE_CAPACITOR,
+                SlimefunItems.LARGE_CAPACITOR, SlimefunItems.ENHANCED_AUTO_CRAFTER, SlimefunItems.LARGE_CAPACITOR,
                 Items.MAG_THOR, Items.ADVANCED_MACHINE_BLOCK, SlimefunItems.ADVANCED_CIRCUIT_BOARD
         });
 
@@ -66,7 +66,7 @@ public class UUCraftingChamber extends SlimefunItem implements InventoryBlock, E
             @Override
             public void newInstance(BlockMenu menu, Block b) {
                 if (!BlockStorage.hasBlockInfo(b) || BlockStorage.getLocationInfo(b.getLocation(), "enabled") == null || BlockStorage.getLocationInfo(b.getLocation(), "enabled").equals(String.valueOf(false))) {
-                    menu.replaceExistingItem(31, new CustomItem(Material.GUNPOWDER, "&7啟用狀態: &4\u2718", "", "&e> 點我開啟機器"));
+                    menu.replaceExistingItem(31, new CustomItemStack(Material.GUNPOWDER, "&7啟用狀態: &4\u2718", "", "&e> 點我開啟機器"));
                     menu.addMenuClickHandler(31, (p, slot, item, action) -> {
                         BlockStorage.addBlockInfo(b, "enabled", String.valueOf(true));
                         newInstance(menu, b);
@@ -74,7 +74,7 @@ public class UUCraftingChamber extends SlimefunItem implements InventoryBlock, E
                     });
                 }
                 else {
-                    menu.replaceExistingItem(31, new CustomItem(Material.REDSTONE, "&7啟用狀態: &2\u2714", "", "&e> 點我關閉機器"));
+                    menu.replaceExistingItem(31, new CustomItemStack(Material.REDSTONE, "&7啟用狀態: &2\u2714", "", "&e> 點我關閉機器"));
                     menu.addMenuClickHandler(31, (p, slot, item, action) -> {
                         BlockStorage.addBlockInfo(b, "enabled", String.valueOf(false));
                         newInstance(menu, b);
@@ -85,7 +85,7 @@ public class UUCraftingChamber extends SlimefunItem implements InventoryBlock, E
 
             @Override
             public boolean canOpen(Block b, Player p) {
-                return p.hasPermission("slimefun.inventory.bypass") || SlimefunPlugin.getProtectionManager().hasPermission(p, b.getLocation(), ProtectableAction.INTERACT_BLOCK);
+                return p.hasPermission("slimefun.inventory.bypass") || SlimefunPlugin.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.INTERACT_BLOCK);
             }
 
             @Override
@@ -150,15 +150,15 @@ public class UUCraftingChamber extends SlimefunItem implements InventoryBlock, E
 
     protected void constructMenu(BlockMenuPreset preset) {
         for (int i : border) {
-            preset.addItem(i, new CustomItem(new ItemStack(Material.GRAY_STAINED_GLASS_PANE), " "), (p, slot, item, action) -> false);
+            preset.addItem(i, new CustomItemStack(new ItemStack(Material.GRAY_STAINED_GLASS_PANE), " "), (p, slot, item, action) -> false);
         }
 
         for (int i : inputBorder) {
-            preset.addItem(i, new CustomItem(new ItemStack(Material.BLUE_STAINED_GLASS_PANE), " "), (p, slot, item, action) -> false);
+            preset.addItem(i, new CustomItemStack(new ItemStack(Material.BLUE_STAINED_GLASS_PANE), " "), (p, slot, item, action) -> false);
         }
 
         for (int i : outputBorder) {
-            preset.addItem(i, new CustomItem(new ItemStack(Material.ORANGE_STAINED_GLASS_PANE), " "), (p, slot, item, action) -> false);
+            preset.addItem(i, new CustomItemStack(new ItemStack(Material.ORANGE_STAINED_GLASS_PANE), " "), (p, slot, item, action) -> false);
         }
 
         for (int i : getOutputSlots()) {
@@ -176,7 +176,7 @@ public class UUCraftingChamber extends SlimefunItem implements InventoryBlock, E
             });
         }
 
-        preset.addItem(13, new CustomItem(new ItemStack(Material.CRAFTING_TABLE), "&e合成表", "", "&6請在本格正下方放入要合成的成品", "&6並在左方輸入欄放入 &5通用物質"), (p, slot, item, action) -> false);
+        preset.addItem(13, new CustomItemStack(new ItemStack(Material.CRAFTING_TABLE), "&e合成表", "", "&6請在本格正下方放入要合成的成品", "&6並在左方輸入欄放入 &5通用物質"), (p, slot, item, action) -> false);
     }
 
     @Override

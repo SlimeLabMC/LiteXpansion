@@ -2,11 +2,11 @@ package dev.j3fftw.litexpansion.uumatter;
 
 import dev.j3fftw.litexpansion.Items;
 import dev.j3fftw.litexpansion.LiteXpansion;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.config.Config;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -67,7 +67,7 @@ public final class UUMatter {
             this.recipes.size()
         });
 
-        UuMatterCategory.INSTANCE.register();
+        UuMatterCategory.INSTANCE.register(LiteXpansion.getInstance());
 
         registered = true;
     }

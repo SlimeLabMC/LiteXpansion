@@ -4,12 +4,12 @@ import dev.j3fftw.litexpansion.Items;
 import dev.j3fftw.litexpansion.LiteXpansion;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.inventory.InvUtils;
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.Slimefun;
-import me.mrCookieSlime.Slimefun.cscorelib2.inventory.InvUtils;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -129,8 +129,8 @@ public class RefinedSmeltery extends MultiBlockMachine {
             if (converting != null) {
                 for (int j = 0; j < inv.getContents().length; j++) {
                     if (j == (inv.getContents().length - 1)
-                        && !SlimefunUtils.isItemSimilar(converting,
-                        inv.getContents()[j], true)) {
+                        && !SlimefunUtils.isItemSimilar(inv.getContents()[j], converting,
+                         false)) {
                         return false;
                     } else if (SlimefunUtils.isItemSimilar(inv.getContents()[j], converting, false)) break;
                 }

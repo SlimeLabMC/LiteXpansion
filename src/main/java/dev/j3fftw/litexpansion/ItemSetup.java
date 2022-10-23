@@ -10,10 +10,10 @@ import dev.j3fftw.litexpansion.weapons.NanoBlade;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.UnplaceableBlock;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -86,14 +86,14 @@ final class ItemSetup {
         );
 
         // Machine block
-        registerItem(Items.MACHINE_BLOCK, RecipeType.ENHANCED_CRAFTING_TABLE,
+        registerNonPlaceableItem(Items.MACHINE_BLOCK, RecipeType.ENHANCED_CRAFTING_TABLE,
             Items.REFINED_IRON, Items.REFINED_IRON, Items.REFINED_IRON,
             Items.REFINED_IRON, null, Items.REFINED_IRON,
             Items.REFINED_IRON, Items.REFINED_IRON, Items.REFINED_IRON
         );
 
         // Advanced Machine Block
-        registerItem(Items.ADVANCED_MACHINE_BLOCK, RecipeType.ENHANCED_CRAFTING_TABLE,
+        registerNonPlaceableItem(Items.ADVANCED_MACHINE_BLOCK, RecipeType.ENHANCED_CRAFTING_TABLE,
             null, Items.ADVANCED_ALLOY, null,
             Items.CARBON_PLATE, Items.MACHINE_BLOCK, Items.CARBON_PLATE,
             null, Items.CARBON_PLATE, null
@@ -134,7 +134,7 @@ final class ItemSetup {
     }
 
     private void registerEndgameItems() {
-        registerNonPlaceableItem(Items.SCRAP, ScrapMachine.RECIPE_TYPE, new CustomItem(Material.COBBLESTONE,
+        registerNonPlaceableItem(Items.SCRAP, ScrapMachine.RECIPE_TYPE, new CustomItemStack(Material.COBBLESTONE,
             "&7任何物品!"));
         registerNonPlaceableItem(Items.UU_MATTER, MassFabricator.RECIPE_TYPE, Items.SCRAP);
         registerNonPlaceableItem(Items.IRIDIUM, RecipeType.ENHANCED_CRAFTING_TABLE,
